@@ -2,8 +2,7 @@
 import Layout from '../components/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import ProductCarousel from '../components/ProductCarousel.astro';
-import Tabs from '../components/Tabs.astro';
-import Steps from '../components/Steps.astro';
+import HowItWorks from '../components/HowItWorks.astro';
 import { getCollection, getEntry } from 'astro:content';
 
 let settings = null;
@@ -134,39 +133,7 @@ const featuredProducts = products
   />
 
   <!-- How It Works -->
-  <section class="py-12 bg-gray-50">
-    <div class="container mx-auto px-4">
-      <SectionTitle title="Как работим" />
-      <Tabs
-        tabs={[
-          { id: 'products', label: 'Подаръци и готови продукти' },
-          { id: 'services', label: 'Услуги' }
-        ]}
-        defaultTab="products"
-      >
-        <div slot="products">
-          <Steps
-            steps={[
-              { title: 'Избираш продукт', description: 'Разгледай нашата колекция и избери продукт' },
-              { title: 'Ако е персонализиран – изпращаш текст/снимка/идея', description: 'За персонализирани продукти изпрати детайли за персонализацията' },
-              { title: 'Потвърждение + изработка', description: 'Потвърждаваме детайлите и започваме изработката' },
-              { title: 'Доставка (преглед/наложен платеж)', description: 'Доставяме продукта с опция за преглед преди плащане' }
-            ]}
-          />
-        </div>
-        <div slot="services">
-          <Steps
-            steps={[
-              { title: 'Изпращаш файл/идея', description: 'Изпрати 3D файл или опиши идеята си' },
-              { title: 'Потвърждаваме материал, цена и срок', description: 'Обсъждаме детайлите и потвърждаваме условията' },
-              { title: 'Изработка', description: 'Започваме изработката с високо качество' },
-              { title: 'Доставка (преглед/наложен платеж)', description: 'Доставяме готовия продукт с опция за преглед' }
-            ]}
-          />
-        </div>
-      </Tabs>
-    </div>
-  </section>
+  <HowItWorks defaultTab="products" />
 
   <!-- Mini Gallery Products -->
   <section class="py-12 bg-white">

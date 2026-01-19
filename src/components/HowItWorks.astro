@@ -1,0 +1,332 @@
+---
+interface Step {
+  number: string;
+  title: string;
+  description: string;
+  icon: string; // SVG path or icon identifier
+}
+
+interface Props {
+  defaultTab?: 'products' | 'services';
+}
+
+const { defaultTab = 'products' } = Astro.props;
+const componentId = `how-it-works-${Math.random().toString(36).substr(2, 9)}`;
+
+// Step data for both flows
+const flows: Record<'products' | 'services', Step[]> = {
+  products: [
+    {
+      number: '01',
+      title: 'Избираш продукт',
+      description: 'Разгледай нашата колекция и избери продукт',
+      icon: 'shopping'
+    },
+    {
+      number: '02',
+      title: 'Ако е персонализиран – изпращаш текст/снимка/идея',
+      description: 'За персонализирани продукти изпрати детайли за персонализацията',
+      icon: 'customize'
+    },
+    {
+      number: '03',
+      title: 'Потвърждение + изработка',
+      description: 'Потвърждаваме детайлите и започваме изработката',
+      icon: 'confirm'
+    },
+    {
+      number: '04',
+      title: 'Доставка (преглед/наложен платеж)',
+      description: 'Доставяме продукта с опция за преглед преди плащане',
+      icon: 'delivery'
+    }
+  ],
+  services: [
+    {
+      number: '01',
+      title: 'Изпращаш файл/идея и изисквания',
+      description: 'Изпрати 3D файл или опиши идеята си с детайлни изисквания',
+      icon: 'upload'
+    },
+    {
+      number: '02',
+      title: 'Уточняваме материал, цена и срок',
+      description: 'Обсъждаме детайлите и потвърждаваме условията за изработка',
+      icon: 'discuss'
+    },
+    {
+      number: '03',
+      title: 'Изработка / прототипиране',
+      description: 'Започваме изработката с високо качество и прецизност',
+      icon: 'print'
+    },
+    {
+      number: '04',
+      title: 'Доставка или взимане на място (преглед/наложен платеж)',
+      description: 'Доставяме готовия продукт с опция за преглед преди плащане',
+      icon: 'pickup'
+    }
+  ]
+};
+
+// Icon SVG paths
+const icons: Record<string, string> = {
+  shopping: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z',
+  customize: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
+  confirm: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+  delivery: 'M13 10V3L4 14h7v7l9-11h-7z',
+  upload: 'M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12',
+  discuss: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+  print: 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z',
+  pickup: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z'
+};
+
+const productsTabId = `${componentId}-tab-products`;
+const servicesTabId = `${componentId}-tab-services`;
+const productsPanelId = `${componentId}-panel-products`;
+const servicesPanelId = `${componentId}-panel-services`;
+---
+
+<section class="py-12 bg-gray-50" aria-label="Как работим">
+  <div class="container mx-auto px-4 max-w-6xl">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Как работим</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        Прости стъпки към вашия персонализиран продукт или услуга
+      </p>
+    </div>
+
+    <!-- Segmented Control (Modern Tabs) -->
+    <div class="flex justify-center mb-12">
+      <div 
+        class="inline-flex bg-white p-1.5 rounded-full shadow-sm border border-gray-200"
+        role="tablist"
+        aria-label="Избери тип услуга"
+      >
+        <button
+          id={productsTabId}
+          type="button"
+          role="tab"
+          aria-selected={defaultTab === 'products' ? 'true' : 'false'}
+          aria-controls={productsPanelId}
+          data-tab="products"
+          class={`px-6 py-3 rounded-full font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+            defaultTab === 'products'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+          }`}
+          tabindex={defaultTab === 'products' ? 0 : -1}
+        >
+          Подаръци и готови продукти
+        </button>
+        <button
+          id={servicesTabId}
+          type="button"
+          role="tab"
+          aria-selected={defaultTab === 'services' ? 'true' : 'false'}
+          aria-controls={servicesPanelId}
+          data-tab="services"
+          class={`px-6 py-3 rounded-full font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+            defaultTab === 'services'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+          }`}
+          tabindex={defaultTab === 'services' ? 0 : -1}
+        >
+          Услуги
+        </button>
+      </div>
+    </div>
+
+    <!-- Panels -->
+    <div class="relative min-h-[400px]">
+      <!-- Products Panel -->
+      <div
+        id={productsPanelId}
+        role="tabpanel"
+        aria-labelledby={productsTabId}
+        class={`transition-all duration-300 ${
+          defaultTab === 'products' 
+            ? 'opacity-100 translate-y-0 relative' 
+            : 'opacity-0 absolute inset-0 pointer-events-none translate-y-4 hidden'
+        }`}
+        data-panel="products"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          <!-- Connecting Line (Desktop only) -->
+          <div 
+            class="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 -z-10"
+            aria-hidden="true"
+          ></div>
+          
+          {flows.products.map((step, index) => (
+            <div 
+              class="relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 group"
+            >
+              <!-- Left Accent Line (Mobile only) -->
+              <div 
+                class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-l-2xl md:hidden"
+                aria-hidden="true"
+              ></div>
+              
+              <!-- Step Number Badge -->
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md group-hover:scale-110 transition-transform">
+                  {step.number}
+                </div>
+                <div class="flex-1 h-0.5 bg-gray-200 md:hidden" aria-hidden="true"></div>
+              </div>
+
+              <!-- Icon -->
+              <div class="mb-4 text-blue-600">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={icons[step.icon]} />
+                </svg>
+              </div>
+
+              <!-- Content -->
+              <h3 class="font-semibold text-lg text-gray-900 mb-2">{step.title}</h3>
+              <p class="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Services Panel -->
+      <div
+        id={servicesPanelId}
+        role="tabpanel"
+        aria-labelledby={servicesTabId}
+        class={`transition-all duration-300 ${
+          defaultTab === 'services' 
+            ? 'opacity-100 translate-y-0 relative' 
+            : 'opacity-0 absolute inset-0 pointer-events-none translate-y-4 hidden'
+        }`}
+        data-panel="services"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          <!-- Connecting Line (Desktop only) -->
+          <div 
+            class="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 -z-10"
+            aria-hidden="true"
+          ></div>
+          
+          {flows.services.map((step, index) => (
+            <div 
+              class="relative bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 group"
+            >
+              <!-- Left Accent Line (Mobile only) -->
+              <div 
+                class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-l-2xl md:hidden"
+                aria-hidden="true"
+              ></div>
+              
+              <!-- Step Number Badge -->
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md group-hover:scale-110 transition-transform">
+                  {step.number}
+                </div>
+                <div class="flex-1 h-0.5 bg-gray-200 md:hidden" aria-hidden="true"></div>
+              </div>
+
+              <!-- Icon -->
+              <div class="mb-4 text-blue-600">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={icons[step.icon]} />
+                </svg>
+              </div>
+
+              <!-- Content -->
+              <h3 class="font-semibold text-lg text-gray-900 mb-2">{step.title}</h3>
+              <p class="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-all {
+      transition: none;
+    }
+    [role="tabpanel"] {
+      transition: opacity 0.1s;
+    }
+  }
+</style>
+
+<script define:vars={{ componentId, productsTabId, servicesTabId, productsPanelId, servicesPanelId }}>
+  const productsTab = document.getElementById(productsTabId);
+  const servicesTab = document.getElementById(servicesTabId);
+  const productsPanel = document.getElementById(productsPanelId);
+  const servicesPanel = document.getElementById(servicesPanelId);
+
+  if (!productsTab || !servicesTab || !productsPanel || !servicesPanel) {
+    console.warn('HowItWorks: Elements not found');
+  } else {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const switchTab = (activeTab) => {
+      const isProducts = activeTab === 'products';
+      
+      // Update tab buttons
+      [productsTab, servicesTab].forEach((tab, index) => {
+        const isActive = (isProducts && index === 0) || (!isProducts && index === 1);
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.setAttribute('tabindex', isActive ? '0' : '-1');
+        
+        if (isActive) {
+          tab.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+          tab.classList.remove('text-gray-700', 'hover:text-blue-600', 'hover:bg-gray-50');
+        } else {
+          tab.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+          tab.classList.add('text-gray-700', 'hover:text-blue-600', 'hover:bg-gray-50');
+        }
+      });
+
+      // Update panels
+      if (isProducts) {
+        productsPanel.classList.remove('opacity-0', 'absolute', 'inset-0', 'pointer-events-none', 'translate-y-4', 'hidden');
+        productsPanel.classList.add('opacity-100', 'translate-y-0', 'relative');
+        servicesPanel.classList.remove('opacity-100', 'translate-y-0', 'relative');
+        servicesPanel.classList.add('opacity-0', 'absolute', 'inset-0', 'pointer-events-none', 'translate-y-4', 'hidden');
+      } else {
+        servicesPanel.classList.remove('opacity-0', 'absolute', 'inset-0', 'pointer-events-none', 'translate-y-4', 'hidden');
+        servicesPanel.classList.add('opacity-100', 'translate-y-0', 'relative');
+        productsPanel.classList.remove('opacity-100', 'translate-y-0', 'relative');
+        productsPanel.classList.add('opacity-0', 'absolute', 'inset-0', 'pointer-events-none', 'translate-y-4', 'hidden');
+      }
+    };
+
+    // Click handlers
+    productsTab.addEventListener('click', () => switchTab('products'));
+    servicesTab.addEventListener('click', () => switchTab('services'));
+
+    // Keyboard navigation
+    const handleKeyDown = (e, currentTab) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const nextTab = e.key === 'ArrowLeft' ? 'products' : 'services';
+        if (nextTab !== currentTab) {
+          switchTab(nextTab);
+          (nextTab === 'products' ? productsTab : servicesTab).focus();
+        }
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        switchTab('products');
+        productsTab.focus();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        switchTab('services');
+        servicesTab.focus();
+      }
+    };
+
+    productsTab.addEventListener('keydown', (e) => handleKeyDown(e, 'products'));
+    servicesTab.addEventListener('keydown', (e) => handleKeyDown(e, 'services'));
+  }
+</script>
