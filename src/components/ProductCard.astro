@@ -3,61 +3,135 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   product: CollectionEntry<'products'>;
+  view?: 'grid' | 'list';
 }
 
-const { product } = Astro.props;
+const { product, view = 'grid' } = Astro.props;
 const { data, slug } = product;
 const priceDisplay = data.price ? `${data.price} лв.` : data.priceFrom ? `от ${data.priceFrom} лв.` : 'По запитване';
+const isListView = view === 'list';
 ---
 
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-  <a href={`/products/${slug}`} class="block focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg">
-    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-      {data.images && data.images[0] ? (
-        <img
-          src={data.images[0].src}
-          alt={data.images[0].alt || data.title}
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-      ) : (
-        <div class="w-full h-full flex items-center justify-center text-gray-400">
-          <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-      )}
-      <div class="absolute top-2 right-2 flex gap-1">
-        {data.isNew && (
-          <span class="bg-green-500 text-white text-xs px-2 py-1 rounded">Ново</span>
-        )}
-        {data.featured && (
-          <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded">Топ</span>
-        )}
-        {data.isCustomizable && (
-          <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Персонализиран</span>
+{isListView ? (
+  <!-- List View Layout -->
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+    <div class="flex flex-col md:flex-row md:items-stretch">
+      <!-- Image: Fixed size on desktop, reasonable on mobile -->
+      <div class="w-full md:w-56 lg:w-64 h-40 md:h-36 lg:h-40 bg-gray-200 flex-shrink-0 overflow-hidden rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+        {data.images && data.images[0] ? (
+          <img
+            src={data.images[0].src}
+            alt={data.images[0].alt || data.title}
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div class="w-full h-full flex items-center justify-center text-gray-400">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
         )}
       </div>
-    </div>
-    <div class="p-4">
-      <h3 class="font-semibold text-lg mb-2 text-gray-900">{data.title}</h3>
-      <p class="text-gray-600 text-sm mb-3 line-clamp-2">{data.shortDescription}</p>
-      <div class="text-xl font-bold text-blue-600 mb-3">{priceDisplay}</div>
-      <div class="flex gap-2">
-        <a
-          href={`/contacts?product=${slug}`}
-          class="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
-        >
-          Поръчай
-        </a>
-        <a
-          href={`/products/${slug}`}
-          class="flex-1 border border-blue-600 text-blue-600 text-center py-2 rounded hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
-        >
-          Детайли
-        </a>
-      </div>
-    </div>
-  </a>
-</div>
 
+      <!-- Content: Flex column with proper spacing -->
+      <div class="flex-1 flex flex-col p-4 md:p-5">
+        <!-- Top Row: Title + Badges (inline, not overlay) -->
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <h3 class="font-semibold text-lg text-gray-900 flex-1">{data.title}</h3>
+          <div class="flex gap-1.5 flex-shrink-0 flex-wrap">
+            {data.isNew && (
+              <span class="bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Ново</span>
+            )}
+            {data.featured && (
+              <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Топ</span>
+            )}
+            {data.isCustomizable && (
+              <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Персонализиран</span>
+            )}
+          </div>
+        </div>
+
+        <!-- Middle: Description -->
+        <p class="text-gray-600 text-sm mb-3 line-clamp-2 flex-1">{data.shortDescription}</p>
+
+        <!-- Bottom Row: Price + Actions (aligned) -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-auto pt-3 border-t border-gray-100">
+          <div class="text-xl font-bold text-blue-600">{priceDisplay}</div>
+          <div class="flex gap-2 md:gap-3 flex-shrink-0">
+            <a
+              href={`/contacts?product=${slug}`}
+              class="w-full md:w-auto px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition whitespace-nowrap text-center"
+            >
+              Поръчай
+            </a>
+            <a
+              href={`/products/${slug}`}
+              class="w-full md:w-auto px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition whitespace-nowrap text-center"
+            >
+              Детайли
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+) : (
+  <!-- Grid View Layout -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+    <a href={`/products/${slug}`} class="block focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg h-full flex flex-col">
+      <!-- Image Container -->
+      <div class="aspect-square bg-gray-200 relative overflow-hidden">
+        {data.images && data.images[0] ? (
+          <img
+            src={data.images[0].src}
+            alt={data.images[0].alt || data.title}
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div class="w-full h-full flex items-center justify-center text-gray-400">
+            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+        <!-- Badges Overlay (Grid only) -->
+        <div class="absolute top-2 right-2 flex gap-1">
+          {data.isNew && (
+            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded">Ново</span>
+          )}
+          {data.featured && (
+            <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded">Топ</span>
+          )}
+          {data.isCustomizable && (
+            <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Персонализиран</span>
+          )}
+        </div>
+      </div>
+      
+      <!-- Content Container -->
+      <div class="p-4 flex flex-col flex-1">
+        <div class="flex-1">
+          <h3 class="font-semibold text-lg mb-2 text-gray-900">{data.title}</h3>
+          <p class="text-gray-600 text-sm mb-3 line-clamp-2">{data.shortDescription}</p>
+          <div class="text-xl font-bold text-blue-600 mb-3">{priceDisplay}</div>
+        </div>
+        <div class="flex gap-2 mt-auto">
+          <a
+            href={`/contacts?product=${slug}`}
+            class="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+          >
+            Поръчай
+          </a>
+          <a
+            href={`/products/${slug}`}
+            class="flex-1 border border-blue-600 text-blue-600 text-center py-2 rounded hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+          >
+            Детайли
+          </a>
+        </div>
+      </div>
+    </a>
+  </div>
+)}
