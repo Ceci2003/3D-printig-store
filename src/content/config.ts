@@ -6,9 +6,19 @@ const settingsCollection = defineCollection({
     siteName: z.string(),
     brandTagline: z.string().optional(),
     contactPhone: z.string(),
+    contactPhone2: z.string().optional(),
+    contactPhones: z.array(z.object({
+      label: z.string().optional(),
+      number: z.string(),
+    })).optional(),
     contactEmail: z.string(),
     address: z.string().optional(),
     viberNumber: z.string(),
+    viberNumber2: z.string().optional(),
+    viberContacts: z.array(z.object({
+      label: z.string().optional(),
+      number: z.string(),
+    })).optional(),
     social: z.object({
       facebook: z.string().optional(),
       instagram: z.string().optional(),

@@ -2,9 +2,11 @@
   "siteName": "3D Print Studio",
   "brandTagline": "Вашият партньор за 3D печат и дизайн",
   "contactPhone": "+359888123456",
+  "contactPhone2": "+359888123457",
   "contactEmail": "info@3dprintstudio.bg",
   "address": "София, България",
   "viberNumber": "+359888123456",
+  "viberNumber2": "+359888123457",
   "social": {
     "facebook": "https://facebook.com/3dprintstudio",
     "instagram": "https://instagram.com/3dprintstudio"

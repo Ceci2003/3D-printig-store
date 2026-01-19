@@ -13,6 +13,27 @@
         "contactPhone": {
           "type": "string"
         },
+        "contactPhone2": {
+          "type": "string"
+        },
+        "contactPhones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "number"
+            ],
+            "additionalProperties": false
+          }
+        },
         "contactEmail": {
           "type": "string"
         },
@@ -21,6 +42,27 @@
         },
         "viberNumber": {
           "type": "string"
+        },
+        "viberNumber2": {
+          "type": "string"
+        },
+        "viberContacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "number"
+            ],
+            "additionalProperties": false
+          }
         },
         "social": {
           "type": "object",
