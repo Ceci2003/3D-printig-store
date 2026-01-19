@@ -1,0 +1,17 @@
+{
+  "siteName": "3D Print Studio",
+  "brandTagline": "Вашият партньор за 3D печат и дизайн",
+  "contactPhone": "+359888123456",
+  "contactEmail": "info@3dprintstudio.bg",
+  "address": "София, България",
+  "viberNumber": "+359888123456",
+  "social": {
+    "facebook": "https://facebook.com/3dprintstudio",
+    "instagram": "https://instagram.com/3dprintstudio"
+  },
+  "couriers": ["Еконт", "Спиди", "Рапидо"],
+  "defaultCurrency": "BGN",
+  "turnaroundText": "Обикновено 1–3 дни",
+  "paymentOptions": ["Наложен платеж", "Преглед преди плащане", "Банков превод"]
+}
+

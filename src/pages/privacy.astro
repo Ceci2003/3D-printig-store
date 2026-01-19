@@ -1,0 +1,87 @@
+---
+import Layout from '../components/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<Layout>
+  <title>Политика за поверителност - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle 
+      title="Политика за поверителност" 
+    />
+
+    <div class="max-w-3xl mx-auto prose prose-lg">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-bold mb-4">1. Общи разпоредби</h2>
+        <p class="text-gray-700 mb-4">
+          Настоящата политика за поверителност описва как събираме, използваме и защитаваме личната информация, 
+          която получаваме от потребителите на нашия уебсайт.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">2. Събиране на информация</h2>
+        <p class="text-gray-700 mb-4">
+          Събираме информация, която ни предоставяте директно при използване на контактната форма, 
+          при поръчка или при комуникация с нас. Тази информация може да включва име, имейл адрес, 
+          телефонен номер и друга информация, необходима за обработка на поръчката.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">3. Използване на информация</h2>
+        <p class="text-gray-700 mb-4">
+          Използваме събраната информация за:
+        </p>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          <li>• Обработка и изпълнение на поръчки</li>
+          <li>• Комуникация с клиенти</li>
+          <li>• Подобряване на услугите ни</li>
+          <li>• Изпращане на важни съобщения относно поръчки</li>
+        </ul>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">4. Защита на данните</h2>
+        <p class="text-gray-700 mb-4">
+          Прилагаме подходящи технически и организационни мерки за защита на личната информация срещу 
+          неоторизиран достъп, загуба или унищожаване.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">5. Споделяне на информация</h2>
+        <p class="text-gray-700 mb-4">
+          Не споделяме личната ви информация с трети страни, освен когато това е необходимо за изпълнение 
+          на поръчка (например с куриерски компании) или когато това се изисква от закона.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">6. Вашите права</h2>
+        <p class="text-gray-700 mb-4">
+          Имате право да:
+        </p>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          <li>• Достъп до вашата лична информация</li>
+          <li>• Корекция на неточна информация</li>
+          <li>• Изтриване на вашата информация</li>
+          <li>• Възражение срещу обработката на вашата информация</li>
+        </ul>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">7. Контакти</h2>
+        <p class="text-gray-700 mb-4">
+          За въпроси относно тази политика за поверителност, моля свържете се с нас на:
+        </p>
+        <p class="text-gray-700">
+          Имейл: <a href={`mailto:${settings?.contactEmail}`} class="text-blue-600 hover:text-blue-700">{settings?.contactEmail}</a><br />
+          Телефон: <a href={`tel:${settings?.contactPhone}`} class="text-blue-600 hover:text-blue-700">{settings?.contactPhone}</a>
+        </p>
+
+        <p class="text-gray-600 text-sm mt-8">
+          Последна актуализация: {new Date().toLocaleDateString('bg-BG')}
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+

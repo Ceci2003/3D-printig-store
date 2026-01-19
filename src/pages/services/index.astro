@@ -1,0 +1,129 @@
+---
+import Layout from '../../components/Layout.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import Steps from '../../components/Steps.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<Layout>
+  <title>Услуги - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle title="Нашите услуги" subtitle="Професионални 3D печат и дизайн услуги" />
+
+    <!-- How It Works for Services -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-12">
+      <h3 class="text-xl font-bold mb-4">Как протича услугата</h3>
+      <Steps
+        steps={[
+          { title: 'Изпращаш файл/идея' },
+          { title: 'Потвърждаваме материал, цена и срок' },
+          { title: 'Изработка' },
+          { title: 'Доставка (преглед/наложен платеж)' }
+        ]}
+      />
+    </div>
+
+    <!-- Service Cards -->
+    <div class="grid md:grid-cols-3 gap-8 mb-12">
+      <!-- 3D Printing -->
+      <div id="printing" class="bg-white rounded-lg shadow-md p-6 scroll-mt-20">
+        <div class="text-4xl mb-4">🖨️</div>
+        <h2 class="text-2xl font-bold mb-4">3D Печат</h2>
+        <p class="text-gray-600 mb-4">
+          Професионален 3D печат с различни материали като PLA, PETG, ABS, TPU и резин. 
+          Използваме модерни технологии за високо качество и прецизност.
+        </p>
+        <ul class="space-y-2 mb-6 text-sm text-gray-700">
+          <li>• FDM печат (PLA, PETG, ABS, TPU)</li>
+          <li>• Resin печат за детайлни модели</li>
+          <li>• Различни размери и резолюции</li>
+          <li>• Консултации по избор на материал</li>
+        </ul>
+        <a
+          href="/contacts"
+          class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+        >
+          Запитване
+        </a>
+      </div>
+
+      <!-- Design -->
+      <div id="design" class="bg-white rounded-lg shadow-md p-6 scroll-mt-20">
+        <div class="text-4xl mb-4">✏️</div>
+        <h2 class="text-2xl font-bold mb-4">Дизайн и моделиране</h2>
+        <p class="text-gray-600 mb-4">
+          Създаване на 3D модели от нулата или модификация на съществуващи. 
+          Работим с различни софтуери и можем да реализираме всяка идея.
+        </p>
+        <ul class="space-y-2 mb-6 text-sm text-gray-700">
+          <li>• 3D моделиране от скици</li>
+          <li>• Модификация на съществуващи модели</li>
+          <li>• Оптимизация за 3D печат</li>
+          <li>• Технически чертежи</li>
+        </ul>
+        <a
+          href="/contacts"
+          class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+        >
+          Запитване
+        </a>
+      </div>
+
+      <!-- 3D Scanning -->
+      <div id="scanning" class="bg-white rounded-lg shadow-md p-6 scroll-mt-20">
+        <div class="text-4xl mb-4">📷</div>
+        <h2 class="text-2xl font-bold mb-4">3D Сканиране</h2>
+        <p class="text-gray-600 mb-4">
+          Прецизно 3D сканиране на обекти за репликация, анализ или архивиране. 
+          Идеално за резервни части или реставрация.
+        </p>
+        <ul class="space-y-2 mb-6 text-sm text-gray-700">
+          <li>• Високо прецизно сканиране</li>
+          <li>• Обработка на данни</li>
+          <li>• Експорт в различни формати</li>
+          <li>• Подготовка за печат</li>
+        </ul>
+        <a
+          href="/contacts"
+          class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+        >
+          Запитване
+        </a>
+      </div>
+    </div>
+
+    <!-- Links to Materials and Gallery -->
+    <div class="grid md:grid-cols-2 gap-6">
+      <a
+        href="/services/materials"
+        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-8 hover:from-blue-600 hover:to-blue-700 transition shadow-lg"
+      >
+        <h3 class="text-2xl font-bold mb-3">Материали</h3>
+        <p class="text-blue-100 mb-4">
+          Научете повече за материалите, които използваме, техните свойства и приложения.
+        </p>
+        <span class="font-semibold">Виж материалите →</span>
+      </a>
+
+      <a
+        href="/services/gallery"
+        class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-8 hover:from-purple-600 hover:to-purple-700 transition shadow-lg"
+      >
+        <h3 class="text-2xl font-bold mb-3">Галерия проекти</h3>
+        <p class="text-purple-100 mb-4">
+          Разгледайте нашите завършени проекти и вдъхновете се за следващия си.
+        </p>
+        <span class="font-semibold">Виж галерията →</span>
+      </a>
+    </div>
+  </div>
+</Layout>
+

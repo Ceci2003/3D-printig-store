@@ -1,0 +1,71 @@
+---
+interface Props {
+  items: Array<{ id: string; question: string; answer: string }>;
+}
+
+const { items } = Astro.props;
+const accordionId = `accordion-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="accordion-container space-y-4" data-accordion-id={accordionId}>
+  {items.map((item) => (
+    <div class="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        type="button"
+        class="w-full px-6 py-4 text-left bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition"
+        aria-expanded="false"
+        aria-controls={`${accordionId}-panel-${item.id}`}
+        id={`${accordionId}-button-${item.id}`}
+        data-item-id={item.id}
+      >
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-gray-900">{item.question}</span>
+          <svg
+            class="w-5 h-5 text-gray-500 transform transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            data-icon
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+      <div
+        id={`${accordionId}-panel-${item.id}`}
+        aria-labelledby={`${accordionId}-button-${item.id}`}
+        class="hidden px-6 py-4 bg-gray-50 text-gray-700"
+        data-panel-id={item.id}
+      >
+        <div set:html={item.answer} />
+      </div>
+    </div>
+  ))}
+</div>
+
+<script define:vars={{ accordionId }}>
+  const container = document.querySelector(`[data-accordion-id="${accordionId}"]`);
+  if (!container) {
+    // Container not found, exit early
+  } else {
+    const buttons = container.querySelectorAll('button[data-item-id]');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const itemId = button.getAttribute('data-item-id');
+        const panel = container.querySelector(`[data-panel-id="${itemId}"]`);
+        const icon = button.querySelector('[data-icon]');
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+        // Toggle state
+        button.setAttribute('aria-expanded', String(!isExpanded));
+        panel?.classList.toggle('hidden');
+        
+        if (icon) {
+          icon.classList.toggle('rotate-180');
+        }
+      });
+    });
+  }
+</script>
+

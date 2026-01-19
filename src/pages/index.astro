@@ -1,0 +1,204 @@
+---
+import Layout from '../components/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Tabs from '../components/Tabs.astro';
+import Steps from '../components/Steps.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+const products = await getCollection('products', ({ data }) => data.status === 'active');
+const featuredProducts = products
+  .filter(p => p.data.featured || p.data.isNew)
+  .slice(0, 8);
+---
+
+<Layout>
+  <title>{settings?.siteName || '3D Print Studio'} - Начало</title>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+          {settings?.siteName || '3D Print Studio'}
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 text-blue-100">
+          {settings?.brandTagline || 'Вашият партньор за 3D печат и дизайн'}
+        </p>
+        
+        <!-- Two Panels -->
+        <div class="grid md:grid-cols-2 gap-6 mt-12">
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Продукти</h2>
+            <ul class="text-left space-y-2 mb-6">
+              <li>• Персонализирани фигурки и подаръци</li>
+              <li>• Готови продукти за всекидневна употреба</li>
+              <li>• Сезонни и специални колекции</li>
+            </ul>
+            <a
+              href="/products"
+              class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition"
+            >
+              Виж продуктите
+            </a>
+          </div>
+          
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Услуги</h2>
+            <ul class="text-left space-y-2 mb-6">
+              <li>• 3D печат по поръчка</li>
+              <li>• Дизайн и моделиране</li>
+              <li>• 3D сканиране</li>
+            </ul>
+            <a
+              href="/services"
+              class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition"
+            >
+              Виж услугите
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top/New Products -->
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <SectionTitle title="Топ продукти" subtitle="Най-популярните и нови продукти" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {featuredProducts.map(product => (
+          <ProductCard product={product} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <SectionTitle title="Как работим" />
+      <Tabs
+        tabs={[
+          { id: 'products', label: 'Подаръци и готови продукти' },
+          { id: 'services', label: 'Услуги' }
+        ]}
+        defaultTab="products"
+      >
+        <div slot="products">
+          <Steps
+            steps={[
+              { title: 'Избираш продукт', description: 'Разгледай нашата колекция и избери продукт' },
+              { title: 'Ако е персонализиран – изпращаш текст/снимка/идея', description: 'За персонализирани продукти изпрати детайли за персонализацията' },
+              { title: 'Потвърждение + изработка', description: 'Потвърждаваме детайлите и започваме изработката' },
+              { title: 'Доставка (преглед/наложен платеж)', description: 'Доставяме продукта с опция за преглед преди плащане' }
+            ]}
+          />
+        </div>
+        <div slot="services">
+          <Steps
+            steps={[
+              { title: 'Изпращаш файл/идея', description: 'Изпрати 3D файл или опиши идеята си' },
+              { title: 'Потвърждаваме материал, цена и срок', description: 'Обсъждаме детайлите и потвърждаваме условията' },
+              { title: 'Изработка', description: 'Започваме изработката с високо качество' },
+              { title: 'Доставка (преглед/наложен платеж)', description: 'Доставяме готовия продукт с опция за преглед' }
+            ]}
+          />
+        </div>
+      </Tabs>
+    </div>
+  </section>
+
+  <!-- Mini Gallery Products -->
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold mb-4">Нашите продукти</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto mb-6">
+          Открийте широк спектър от 3D печатни продукти - от персонализирани подаръци до функционални части.
+        </p>
+        <a
+          href="/products"
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+        >
+          Виж всички продукти
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mini Gallery Services -->
+  <section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold mb-4">Нашите услуги</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-xl font-bold mb-3">3D Печат</h3>
+          <p class="text-gray-600 mb-4">Професионален 3D печат с различни материали и технологии.</p>
+          <a href="/services#printing" class="text-blue-600 hover:text-blue-700 font-semibold">Научи повече →</a>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-xl font-bold mb-3">Дизайн</h3>
+          <p class="text-gray-600 mb-4">Създаване на 3D модели и персонализирани дизайни.</p>
+          <a href="/services#design" class="text-blue-600 hover:text-blue-700 font-semibold">Научи повече →</a>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-xl font-bold mb-3">3D Сканиране</h3>
+          <p class="text-gray-600 mb-4">Прецизно 3D сканиране на обекти за репликация или анализ.</p>
+          <a href="/services#scanning" class="text-blue-600 hover:text-blue-700 font-semibold">Научи повече →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust/Benefits -->
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="font-bold mb-2">{settings?.turnaroundText || 'Обикновено 1–3 дни'}</h3>
+          <p class="text-gray-600 text-sm">Бърза изработка</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">👁️</div>
+          <h3 class="font-bold mb-2">Преглед преди плащане</h3>
+          <p class="text-gray-600 text-sm">Увереност в качеството</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">✓</div>
+          <h3 class="font-bold mb-2">Гаранция</h3>
+          <p class="text-gray-600 text-sm">Гарантирано качество</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">🚚</div>
+          <h3 class="font-bold mb-2">Куриери</h3>
+          <p class="text-gray-600 text-sm">{settings?.couriers?.join(', ') || 'Еконт, Спиди, Рапидо'}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="py-16 bg-blue-600 text-white">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Готови да започнем?</h2>
+      <p class="text-xl mb-8 text-blue-100">Свържете се с нас за безплатна консултация</p>
+      <a
+        href="/contacts"
+        class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition"
+      >
+        Свържи се с нас
+      </a>
+    </div>
+  </section>
+</Layout>
+

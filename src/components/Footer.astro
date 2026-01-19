@@ -1,0 +1,63 @@
+---
+import { getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<footer class="bg-gray-800 text-white mt-auto">
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Logo & Description -->
+      <div class="col-span-1 md:col-span-2">
+        <h3 class="text-2xl font-bold mb-4">{settings?.siteName || '3D Print Studio'}</h3>
+        <p class="text-gray-300 mb-4">{settings?.brandTagline || 'Вашият партньор за 3D печат и дизайн'}</p>
+        {settings?.address && (
+          <p class="text-gray-400">{settings.address}</p>
+        )}
+      </div>
+
+      <!-- Contacts -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Контакти</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li>
+            <a href={`tel:${settings?.contactPhone}`} class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+              {settings?.contactPhone}
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${settings?.contactEmail}`} class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+              {settings?.contactEmail}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Връзки</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li><a href="/" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Начало</a></li>
+          <li><a href="/products" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Продукти</a></li>
+          <li><a href="/services" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Услуги</a></li>
+          <li><a href="/faq" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">ЧЗВ</a></li>
+          <li><a href="/about" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">За нас</a></li>
+          <li><a href="/contacts" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Контакти</a></li>
+          <li><a href="/delivery-payment" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Доставка и плащане</a></li>
+          <li><a href="/privacy" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Политика за поверителност</a></li>
+          <li><a href="/terms" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">Условия</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+      <p>&copy; {new Date().getFullYear()} {settings?.siteName || '3D Print Studio'}. Всички права запазени.</p>
+    </div>
+  </div>
+</footer>
+

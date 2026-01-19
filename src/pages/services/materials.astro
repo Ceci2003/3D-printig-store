@@ -1,0 +1,119 @@
+---
+import Layout from '../../components/Layout.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import { getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+
+interface Material {
+  name: string;
+  description: string;
+  pros: string[];
+  cons: string[];
+  useCases: string[];
+}
+
+const materials: Material[] = [
+  {
+    name: 'PLA',
+    description: 'Полилактична киселина - най-популярният материал за 3D печат',
+    pros: ['Лесно за печат', 'Екологично', 'Няма мирис', 'Добри цветове'],
+    cons: ['Не издържа високи температури', 'Не е много издръжлив'],
+    useCases: ['Прототипи', 'Декоративни обекти', 'Играчки', 'Образователни проекти']
+  },
+  {
+    name: 'PETG',
+    description: 'Полиетилен терефталат гликол - баланс между качество и издръжливост',
+    pros: ['Издръжлив', 'Прозрачен', 'Химически устойчив', 'Лесно за печат'],
+    cons: ['По-скъп от PLA', 'Може да е леко по-труден за печат'],
+    useCases: ['Функционални части', 'Контейнери', 'Автомобилни части', 'Механични компоненти']
+  },
+  {
+    name: 'ABS',
+    description: 'Акрилонитрил бутадиен стирен - издръжлив и устойчив на температура',
+    pros: ['Високо издръжлив', 'Устойчив на температура', 'Добра якост', 'Лесно обработване'],
+    cons: ['Трябва нагрята платформа', 'Може да има мирис', 'Може да се деформира'],
+    useCases: ['Автомобилни части', 'Механични компоненти', 'Функционални прототипи']
+  },
+  {
+    name: 'TPU',
+    description: 'Термопластичен полиуретан - гъвкав и еластичен материал',
+    pros: ['Гъвкав', 'Еластичен', 'Устойчив на износване', 'Устойчив на масла'],
+    cons: ['По-труден за печат', 'По-скъп', 'По-бавна изработка'],
+    useCases: ['Гъвкави части', 'Протези', 'Амортисьори', 'Защитни калъфи']
+  },
+  {
+    name: 'Resin',
+    description: 'Фотополимерна смола - за високо детайлни модели',
+    pros: ['Много високи детайли', 'Гладка повърхност', 'Бърза изработка', 'Широк спектър цветове'],
+    cons: ['По-скъп', 'Трябва по-специална обработка', 'Не е толкова издръжлив'],
+    useCases: ['Бижута', 'Миниатюри', 'Детайлни модели', 'Прототипи с фини детайли']
+  }
+];
+---
+
+<Layout>
+  <title>Материали - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle 
+      title="Материали за 3D печат" 
+      subtitle="Научете повече за материалите, които използваме" 
+    />
+
+    <div class="max-w-4xl mx-auto space-y-8">
+      {materials.map((material) => (
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-3">{material.name}</h2>
+          <p class="text-gray-700 mb-4">{material.description}</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-green-700 mb-2">Предимства:</h3>
+              <ul class="space-y-1">
+                {material.pros.map(pro => (
+                  <li class="text-gray-700">✓ {pro}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-red-700 mb-2">Недостатъци:</h3>
+              <ul class="space-y-1">
+                {material.cons.map(con => (
+                  <li class="text-gray-700">✗ {con}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h3 class="font-semibold mb-2">Типични приложения:</h3>
+            <div class="flex flex-wrap gap-2">
+              {material.useCases.map(useCase => (
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {useCase}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 text-center">
+      <a
+        href="/contacts"
+        class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition font-semibold"
+      >
+        Свържи се с нас за консултация
+      </a>
+    </div>
+  </div>
+</Layout>
+

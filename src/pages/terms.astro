@@ -1,0 +1,89 @@
+---
+import Layout from '../components/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<Layout>
+  <title>Условия за ползване - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle 
+      title="Условия за ползване" 
+    />
+
+    <div class="max-w-3xl mx-auto prose prose-lg">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-bold mb-4">1. Общи условия</h2>
+        <p class="text-gray-700 mb-4">
+          Настоящите условия за ползване се прилагат за всички поръчки и услуги, предоставяни от 
+          {settings?.siteName || '3D Print Studio'}. С изпращане на поръчка или използване на услугите ни, 
+          вие приемате тези условия.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">2. Поръчки</h2>
+        <p class="text-gray-700 mb-4">
+          Всички поръчки се потвърждават писмено (имейл или друг начин на комуникация). 
+          Цените и сроковете се потвърждават преди започване на изработката.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">3. Цени и плащане</h2>
+        <p class="text-gray-700 mb-4">
+          Цените са посочени в български лева (BGN) и включват ДДС, ако е приложимо. 
+          Плащането може да се извърши чрез наложен платеж, банков превод или при получаване след преглед.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">4. Изработка и доставка</h2>
+        <p class="text-gray-700 mb-4">
+          Сроковете за изработка обикновено са 1-3 работни дни, но могат да варират в зависимост от 
+          сложността на проекта. Доставката се извършва чрез куриерски компании и разходите се поемат от клиента.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">5. Качество и гаранция</h2>
+        <p class="text-gray-700 mb-4">
+          Гарантираме качеството на нашите продукти. Ако има проблем с изработката или продуктът 
+          не отговаря на описанието, ще го заменим или възстановим сумата.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">6. Връщане и рекламации</h2>
+        <p class="text-gray-700 mb-4">
+          Рекламации могат да се подават в срок от 7 дни след получаване на продукта. 
+          Продуктите трябва да бъдат върнати в оригиналното си състояние.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">7. Интелектуална собственост</h2>
+        <p class="text-gray-700 mb-4">
+          Всички дизайни, модели и други материали, създадени от нас, остават наша интелектуална собственост, 
+          освен ако не е договорено друго.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">8. Отговорност</h2>
+        <p class="text-gray-700 mb-4">
+          Не носим отговорност за щети, причинени от неправилно използване на продуктите или 
+          от неспазване на инструкциите за употреба.
+        </p>
+
+        <h2 class="text-2xl font-bold mb-4 mt-8">9. Контакти</h2>
+        <p class="text-gray-700 mb-4">
+          За въпроси относно условията за ползване, моля свържете се с нас:
+        </p>
+        <p class="text-gray-700">
+          Имейл: <a href={`mailto:${settings?.contactEmail}`} class="text-blue-600 hover:text-blue-700">{settings?.contactEmail}</a><br />
+          Телефон: <a href={`tel:${settings?.contactPhone}`} class="text-blue-600 hover:text-blue-700">{settings?.contactPhone}</a>
+        </p>
+
+        <p class="text-gray-600 text-sm mt-8">
+          Последна актуализация: {new Date().toLocaleDateString('bg-BG')}
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+

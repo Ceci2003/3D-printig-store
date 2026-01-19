@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "id": "gifts",
+    "title": "Подаръци",
+    "description": "Уникални персонализирани подаръци",
+    "visible": true,
+    "order": 1
+  },
+  {
+    "id": "customizable",
+    "title": "Персонализирани",
+    "description": "Фигурки, литофани и други персонализирани продукти",
+    "visible": true,
+    "order": 2
+  },
+  {
+    "id": "auto-parts",
+    "title": "Авточасти",
+    "description": "Резервни части и аксесоари за автомобили",
+    "visible": true,
+    "order": 3
+  },
+  {
+    "id": "gaming",
+    "title": "Гейминг",
+    "description": "Аксесоари и фигурки за геймъри",
+    "visible": true,
+    "order": 4
+  },
+  {
+    "id": "toys",
+    "title": "Играчки",
+    "description": "3D печатни играчки и модели",
+    "visible": true,
+    "order": 5
+  },
+  {
+    "id": "promo",
+    "title": "Промо",
+    "description": "Магнити, ключодържатели, лампи и други промо продукти",
+    "visible": true,
+    "order": 6
+  },
+  {
+    "id": "seasonal",
+    "title": "Сезонни",
+    "description": "Специални продукти за празници",
+    "visible": true,
+    "order": 7,
+    "type": "seasonal",
+    "seasonalConfig": {
+      "activeSeasons": ["christmas", "valentine", "easter"]
+    }
+  }
+]
+}
+

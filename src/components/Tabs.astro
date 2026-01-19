@@ -1,0 +1,107 @@
+---
+interface Props {
+  tabs: Array<{ id: string; label: string }>;
+  defaultTab?: string;
+}
+
+const { tabs, defaultTab = tabs[0]?.id } = Astro.props;
+const tabsId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="tabs-container" data-tabs-id={tabsId}>
+  <div class="flex border-b border-gray-200 mb-4" role="tablist" aria-label="Табове">
+    {tabs.map((tab, index) => (
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab.id === defaultTab ? 'true' : 'false'}
+        aria-controls={`${tabsId}-panel-${tab.id}`}
+        id={`${tabsId}-tab-${tab.id}`}
+        data-tab-id={tab.id}
+        class={`px-6 py-3 font-medium text-sm border-b-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+          tab.id === defaultTab
+            ? 'border-blue-600 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+        }`}
+        tabindex={tab.id === defaultTab ? 0 : -1}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+
+  <div
+    role="tabpanel"
+    id={`${tabsId}-panel-products`}
+    aria-labelledby={`${tabsId}-tab-products`}
+    class={defaultTab === 'products' ? '' : 'hidden'}
+    data-panel-id="products"
+  >
+    <slot name="products" />
+  </div>
+  <div
+    role="tabpanel"
+    id={`${tabsId}-panel-services`}
+    aria-labelledby={`${tabsId}-tab-services`}
+    class={defaultTab === 'services' ? '' : 'hidden'}
+    data-panel-id="services"
+  >
+    <slot name="services" />
+  </div>
+</div>
+
+<script define:vars={{ tabsId }}>
+  const container = document.querySelector(`[data-tabs-id="${tabsId}"]`);
+  if (!container) {
+    // Container not found, exit early
+  } else {
+    const tabButtons = container.querySelectorAll('[role="tab"]');
+    const tabPanels = container.querySelectorAll('[role="tabpanel"]');
+
+    tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const tabId = button.getAttribute('data-tab-id');
+      
+      // Update buttons
+      tabButtons.forEach((btn) => {
+        const isSelected = btn === button;
+        btn.setAttribute('aria-selected', String(isSelected));
+        btn.setAttribute('tabindex', isSelected ? '0' : '-1');
+        btn.classList.toggle('border-blue-600', isSelected);
+        btn.classList.toggle('text-blue-600', isSelected);
+        btn.classList.toggle('border-transparent', !isSelected);
+        btn.classList.toggle('text-gray-500', !isSelected);
+      });
+
+      // Update panels
+      tabPanels.forEach((panel) => {
+        const isActive = panel.getAttribute('data-panel-id') === tabId;
+        panel.classList.toggle('hidden', !isActive);
+      });
+    });
+
+    // Keyboard navigation
+    button.addEventListener('keydown', (e) => {
+      const currentIndex = Array.from(tabButtons).indexOf(button);
+      let nextIndex;
+
+      if (e.key === 'ArrowLeft') {
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : tabButtons.length - 1;
+      } else if (e.key === 'ArrowRight') {
+        nextIndex = currentIndex < tabButtons.length - 1 ? currentIndex + 1 : 0;
+      } else if (e.key === 'Home') {
+        nextIndex = 0;
+      } else if (e.key === 'End') {
+        nextIndex = tabButtons.length - 1;
+      } else {
+        return;
+      }
+
+      e.preventDefault();
+      (tabButtons[nextIndex] as HTMLElement).focus();
+      (tabButtons[nextIndex] as HTMLElement).click();
+    });
+  });
+  }
+</script>
+

@@ -1,0 +1,36 @@
+---
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import QuickActions from './QuickActions.astro';
+import { getEntry } from 'astro:content';
+import '../styles/global.css';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={settings?.brandTagline || '3D печат и дизайн услуги'} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>
+      <slot name="title" />
+    </title>
+  </head>
+  <body class="min-h-screen flex flex-col bg-gray-50">
+    <Header />
+    <main class="flex-grow">
+      <slot />
+    </main>
+    <Footer />
+    <QuickActions />
+  </body>
+</html>
+

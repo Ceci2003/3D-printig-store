@@ -1,0 +1,79 @@
+{
+  "$ref": "#/definitions/categories",
+  "definitions": {
+    "categories": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "visible": {
+                "type": "boolean",
+                "default": true
+              },
+              "order": {
+                "type": "number",
+                "default": 0
+              },
+              "icon": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "regular",
+                  "seasonal"
+                ],
+                "default": "regular"
+              },
+              "seasonalConfig": {
+                "type": "object",
+                "properties": {
+                  "activeSeasons": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "christmas",
+                        "valentine",
+                        "easter"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "activeSeasons"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "categories"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

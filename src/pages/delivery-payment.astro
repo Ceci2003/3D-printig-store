@@ -1,0 +1,104 @@
+---
+import Layout from '../components/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+---
+
+<Layout>
+  <title>Доставка и плащане - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle 
+      title="Доставка и плащане" 
+      subtitle="Информация за доставка и начини на плащане" 
+    />
+
+    <div class="max-w-3xl mx-auto space-y-8">
+      <!-- Delivery -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4">Доставка</h2>
+        <p class="text-gray-700 mb-4">
+          Работим с водещи куриерски компании за бърза и надеждна доставка в цяла България.
+        </p>
+        
+        <h3 class="text-xl font-semibold mb-3">Куриерски компании:</h3>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          {settings?.couriers?.map(courier => (
+            <li>• {courier}</li>
+          )) || (
+            <>
+              <li>• Еконт</li>
+              <li>• Спиди</li>
+              <li>• Рапидо</li>
+            </>
+          )}
+        </ul>
+
+        <h3 class="text-xl font-semibold mb-3">Срокове:</h3>
+        <p class="text-gray-700 mb-2">
+          Доставката обикновено отнема 1-2 работни дни след изпращане. За по-големи или сложни проекти 
+          срокът може да бъде удължен, което ще бъде обсъдено предварително.
+        </p>
+
+        <h3 class="text-xl font-semibold mb-3">Разходи:</h3>
+        <p class="text-gray-700">
+          Разходите за доставка се изчисляват според теглото и размерите на пратката. 
+          Точната сума ще бъде потвърдена при поръчката.
+        </p>
+      </div>
+
+      <!-- Payment -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4">Плащане</h2>
+        <p class="text-gray-700 mb-4">
+          Предлагаме различни начини за плащане за ваше удобство.
+        </p>
+
+        <h3 class="text-xl font-semibold mb-3">Начини на плащане:</h3>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          {settings?.paymentOptions?.map(option => (
+            <li>• {option}</li>
+          )) || (
+            <>
+              <li>• Наложен платеж</li>
+              <li>• Преглед преди плащане</li>
+              <li>• Банков превод</li>
+            </>
+          )}
+        </ul>
+
+        <h3 class="text-xl font-semibold mb-3">Преглед преди плащане:</h3>
+        <p class="text-gray-700 mb-2">
+          Предлагаме опция за преглед на продукта преди плащане. Можете да отворите пратката, 
+          да прегледате продукта и едва след това да платите. Ако продуктът не отговаря на очакванията, 
+          можете да го върнете без допълнителни разходи.
+        </p>
+
+        <h3 class="text-xl font-semibold mb-3">Гаранция:</h3>
+        <p class="text-gray-700">
+          Гарантираме качеството на нашите продукти. Ако има проблем с изработката или продуктът 
+          не отговаря на описанието, ще го заменим или възстановим сумата.
+        </p>
+      </div>
+
+      <!-- Contact CTA -->
+      <div class="text-center">
+        <p class="text-gray-600 mb-4">Имате въпроси относно доставката или плащането?</p>
+        <a
+          href="/contacts"
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition font-semibold"
+        >
+          Свържи се с нас
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+

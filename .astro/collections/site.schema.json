@@ -1,0 +1,73 @@
+{
+  "$ref": "#/definitions/site",
+  "definitions": {
+    "site": {
+      "type": "object",
+      "properties": {
+        "siteName": {
+          "type": "string"
+        },
+        "brandTagline": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "contactEmail": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "viberNumber": {
+          "type": "string"
+        },
+        "social": {
+          "type": "object",
+          "properties": {
+            "facebook": {
+              "type": "string"
+            },
+            "instagram": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "couriers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "defaultCurrency": {
+          "type": "string",
+          "default": "BGN"
+        },
+        "turnaroundText": {
+          "type": "string",
+          "default": "Обикновено 1–3 дни"
+        },
+        "paymentOptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteName",
+        "contactPhone",
+        "contactEmail",
+        "viberNumber",
+        "couriers",
+        "paymentOptions"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

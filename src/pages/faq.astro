@@ -1,0 +1,47 @@
+---
+import Layout from '../components/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import Accordion from '../components/Accordion.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+const faqItems = await getCollection('faq');
+const sortedFaq = faqItems.sort((a, b) => a.data.order - b.data.order);
+
+const accordionItems = sortedFaq.map(item => ({
+  id: item.slug,
+  question: item.data.question,
+  answer: item.body
+}));
+---
+
+<Layout>
+  <title>Често задавани въпроси - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle 
+      title="Често задавани въпроси" 
+      subtitle="Намерете отговори на най-често задаваните въпроси" 
+    />
+
+    <div class="max-w-3xl mx-auto">
+      <Accordion items={accordionItems} />
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-gray-600 mb-4">Не намерихте отговора, който търсите?</p>
+      <a
+        href="/contacts"
+        class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition font-semibold"
+      >
+        Свържи се с нас
+      </a>
+    </div>
+  </div>
+</Layout>
+

@@ -1,0 +1,180 @@
+---
+import Layout from '../../components/Layout.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import FiltersBar from '../../components/FiltersBar.astro';
+import Steps from '../../components/Steps.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+let settings = null;
+try {
+  settings = (await getEntry('site', 'settings')).data;
+} catch (e) {
+  // Settings not found, use defaults
+}
+const products = await getCollection('products', ({ data }) => data.status === 'active');
+let categoriesData = null;
+try {
+  categoriesData = (await getEntry('categories', 'categories')).data;
+} catch (e) {
+  categoriesData = { categories: [] };
+}
+const visibleCategories = categoriesData.categories
+  .filter(cat => cat.visible)
+  .sort((a, b) => a.order - b.order);
+---
+
+<Layout>
+  <title>Продукти - {settings?.siteName || '3D Print Studio'}</title>
+
+  <div class="container mx-auto px-4 py-8">
+    <SectionTitle title="Нашите продукти" subtitle="Разгледайте нашата колекция от 3D печатни продукти" />
+
+    <!-- How It Works for Products -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+      <h3 class="text-xl font-bold mb-4">Как работи поръчката</h3>
+      <Steps
+        steps={[
+          { title: 'Избираш продукт' },
+          { title: 'Ако е персонализиран – изпращаш текст/снимка/идея' },
+          { title: 'Потвърждение + изработка' },
+          { title: 'Доставка (преглед/наложен платеж)' }
+        ]}
+      />
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Filters Sidebar -->
+      <aside class="md:w-64 flex-shrink-0">
+        <FiltersBar />
+      </aside>
+
+      <!-- Products Grid/List -->
+      <div class="flex-grow">
+        <!-- View Toggle -->
+        <div class="flex justify-between items-center mb-6">
+          <p class="text-gray-600">
+            Намерени: <span id="product-count">{products.length}</span> продукта
+          </p>
+          <div class="flex gap-2">
+            <button
+              id="grid-view-btn"
+              class="p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Мрежа изглед"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+            <button
+              id="list-view-btn"
+              class="p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Списък изглед"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Products Container -->
+        <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-view="grid">
+          {products.map(product => (
+            <div data-product data-category={product.data.categoryId} data-customizable={product.data.isCustomizable} data-title={product.data.title.toLowerCase()} data-description={product.data.shortDescription.toLowerCase()}>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const productsContainer = document.getElementById('products-container');
+  const gridViewBtn = document.getElementById('grid-view-btn');
+  const listViewBtn = document.getElementById('list-view-btn');
+  const searchInput = document.getElementById('search');
+  const categorySelect = document.getElementById('category');
+  const customizableCheck = document.getElementById('customizable');
+  const productCount = document.getElementById('product-count');
+  const allProducts = Array.from(document.querySelectorAll('[data-product]'));
+
+  let currentView = 'grid';
+
+  // View Toggle
+  function setView(view: 'grid' | 'list') {
+    currentView = view;
+    if (productsContainer) {
+      if (view === 'grid') {
+        productsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+        productsContainer.setAttribute('data-view', 'grid');
+        gridViewBtn?.classList.add('bg-blue-100');
+        listViewBtn?.classList.remove('bg-blue-100');
+      } else {
+        productsContainer.className = 'flex flex-col gap-4';
+        productsContainer.setAttribute('data-view', 'list');
+        listViewBtn?.classList.add('bg-blue-100');
+        gridViewBtn?.classList.remove('bg-blue-100');
+      }
+    }
+  }
+
+  gridViewBtn?.addEventListener('click', () => setView('grid'));
+  listViewBtn?.addEventListener('click', () => setView('list'));
+
+  // Filters
+  function filterProducts() {
+    const searchTerm = (searchInput as HTMLInputElement)?.value.toLowerCase() || '';
+    const categoryFilter = (categorySelect as HTMLSelectElement)?.value || '';
+    const customizableFilter = (customizableCheck as HTMLInputElement)?.checked || false;
+
+    let visibleCount = 0;
+
+    allProducts.forEach((product) => {
+      const category = product.getAttribute('data-category') || '';
+      const customizable = product.getAttribute('data-customizable') === 'true';
+      const title = product.getAttribute('data-title') || '';
+      const description = product.getAttribute('data-description') || '';
+
+      const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
+      const matchesCategory = !categoryFilter || category === categoryFilter;
+      const matchesCustomizable = !customizableFilter || customizable;
+
+      if (matchesSearch && matchesCategory && matchesCustomizable) {
+        (product as HTMLElement).style.display = '';
+        visibleCount++;
+      } else {
+        (product as HTMLElement).style.display = 'none';
+      }
+    });
+
+    if (productCount) {
+      productCount.textContent = String(visibleCount);
+    }
+  }
+
+  searchInput?.addEventListener('input', filterProducts);
+  categorySelect?.addEventListener('change', filterProducts);
+  customizableCheck?.addEventListener('change', filterProducts);
+
+  // Initialize
+  setView('grid');
+</script>
+
+<style>
+  [data-view="list"] [data-product] {
+    display: flex;
+  }
+  [data-view="list"] [data-product] > div {
+    display: flex;
+    width: 100%;
+  }
+  [data-view="list"] [data-product] img {
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+  }
+</style>
+
