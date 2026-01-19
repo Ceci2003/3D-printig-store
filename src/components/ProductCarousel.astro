@@ -1,0 +1,167 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  products: CollectionEntry<'products'>[];
+  id: string;
+  title?: string;
+  subtitle?: string;
+}
+
+const { products, id, title, subtitle } = Astro.props;
+const carouselId = `carousel-${id}`;
+const trackId = `track-${id}`;
+const prevButtonId = `prev-${id}`;
+const nextButtonId = `next-${id}`;
+
+// Calculate cards per view for responsive design
+// Mobile: ~1.15 cards, Tablet: 2-3 cards, Desktop: 4 cards
+// We'll use CSS to handle this, but need to set card width accordingly
+---
+
+<section class="py-12 bg-white" role="region" aria-label={title || "Продукти"}>
+  <div class="container mx-auto px-4">
+    {(title || subtitle) && (
+      <div class="mb-8">
+        {title && <h2 class="text-3xl font-bold mb-2">{title}</h2>}
+        {subtitle && <p class="text-gray-600">{subtitle}</p>}
+      </div>
+    )}
+
+    <!-- Carousel Container -->
+    <div class="relative">
+      <!-- Left Gradient Fade -->
+      <div 
+        class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      ></div>
+      
+      <!-- Right Gradient Fade -->
+      <div 
+        class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Arrow Buttons (hidden on mobile for better touch scrolling) -->
+      <button
+        id={prevButtonId}
+        type="button"
+        aria-label="Предишни продукти"
+        aria-controls={trackId}
+        class="hidden sm:flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/90 items-center justify-center"
+        data-carousel-prev
+      >
+        <svg class="w-5 h-5 md:w-6 md:h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <button
+        id={nextButtonId}
+        type="button"
+        aria-label="Следващи продукти"
+        aria-controls={trackId}
+        class="hidden sm:flex absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/90 items-center justify-center"
+        data-carousel-next
+      >
+        <svg class="w-5 h-5 md:w-6 md:h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <!-- Scrollable Track -->
+      <div
+        id={trackId}
+        class="overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+        tabindex="0"
+        role="group"
+        aria-label="Продукти карусел"
+      >
+        <div class="flex gap-6 pb-4 px-1">
+          {products.map((product) => (
+            <div 
+              class="snap-start flex-shrink-0 w-[87%] sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-smooth {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script define:vars={{ trackId, prevButtonId, nextButtonId }}>
+  const track = document.getElementById(trackId);
+  const prevButton = document.getElementById(prevButtonId);
+  const nextButton = document.getElementById(nextButtonId);
+
+  if (!track || !prevButton || !nextButton) {
+    console.warn('Carousel elements not found');
+  } else {
+    // Update button states based on scroll position
+    const updateButtonStates = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = track;
+      const isAtStart = scrollLeft <= 1;
+      const isAtEnd = scrollLeft >= scrollWidth - clientWidth - 1;
+      
+      prevButton.disabled = isAtStart;
+      nextButton.disabled = isAtEnd;
+    };
+
+    // Initial state
+    updateButtonStates();
+
+    // Scroll functions
+    const scrollByPage = (direction) => {
+      const scrollAmount = track.clientWidth;
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      
+      track.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: behavior
+      });
+    };
+
+    // Button event listeners
+    prevButton.addEventListener('click', () => scrollByPage('left'));
+    nextButton.addEventListener('click', () => scrollByPage('right'));
+
+    // Update button states on scroll
+    track.addEventListener('scroll', updateButtonStates);
+
+    // Keyboard navigation
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        scrollByPage('left');
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        scrollByPage('right');
+      }
+    });
+
+    // Update on resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateButtonStates, 150);
+    });
+  }
+</script>

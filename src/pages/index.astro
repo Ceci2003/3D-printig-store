@@ -1,7 +1,7 @@
 ---
 import Layout from '../components/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
-import ProductCard from '../components/ProductCard.astro';
+import ProductCarousel from '../components/ProductCarousel.astro';
 import Tabs from '../components/Tabs.astro';
 import Steps from '../components/Steps.astro';
 import { getCollection, getEntry } from 'astro:content';
@@ -22,46 +22,103 @@ const featuredProducts = products
   <title>{settings?.siteName || '3D Print Studio'} - Начало</title>
 
   <!-- Hero Section -->
-  <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 md:py-24">
-    <div class="container mx-auto px-4">
+  <section class="relative text-white py-16 md:py-24 overflow-hidden">
+    <!-- Background Layers -->
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900"></div>
+    
+    <!-- Subtle Pattern Background (3D printing grid pattern) -->
+    <div 
+      class="absolute inset-0 opacity-[0.15]"
+      style="background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        filter: blur(0.5px);"
+    ></div>
+    
+    <!-- Gradient Overlay for Text Readability -->
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-transparent to-blue-900/60"></div>
+    
+    <!-- Subtle Grain Effect -->
+    <div 
+      class="absolute inset-0 opacity-[0.03] pointer-events-none"
+      style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E');"
+    ></div>
+    
+    <!-- Content -->
+    <div class="container mx-auto px-4 relative z-10">
       <div class="max-w-3xl mx-auto text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight drop-shadow-lg">
           {settings?.siteName || '3D Print Studio'}
         </h1>
-        <p class="text-xl md:text-2xl mb-8 text-blue-100">
+        <p class="text-xl md:text-2xl mb-12 text-blue-50 font-light leading-relaxed drop-shadow-md">
           {settings?.brandTagline || 'Вашият партньор за 3D печат и дизайн'}
         </p>
         
         <!-- Two Panels -->
-        <div class="grid md:grid-cols-2 gap-6 mt-12">
-          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <h2 class="text-2xl font-bold mb-4">Продукти</h2>
-            <ul class="text-left space-y-2 mb-6">
-              <li>• Персонализирани фигурки и подаръци</li>
-              <li>• Готови продукти за всекидневна употреба</li>
-              <li>• Сезонни и специални колекции</li>
-            </ul>
-            <a
-              href="/products"
-              class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition"
-            >
-              Виж продуктите
-            </a>
+        <div class="grid md:grid-cols-2 gap-6 mt-16">
+          <!-- Products Card -->
+          <div class="group relative bg-white/15 backdrop-blur-md rounded-xl p-6 border border-white/20 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-900/50">
+            <!-- Card Background Pattern (Products - 3D objects pattern) -->
+            <div 
+              class="absolute inset-0 opacity-[0.12]"
+              style="background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 2px, transparent 2px),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 2px, transparent 2px),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 1px, transparent 1px);
+                background-size: 60px 60px, 80px 80px, 40px 40px;
+                background-position: 0 0, 20px 20px, 10px 10px;"
+            ></div>
+            
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-purple-600/20 to-blue-800/40"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10">
+              <h2 class="text-2xl font-bold mb-4 text-white drop-shadow-md">Продукти</h2>
+              <ul class="text-left space-y-2 mb-6 text-blue-50">
+                <li>• Персонализирани фигурки и подаръци</li>
+                <li>• Готови продукти за всекидневна употреба</li>
+                <li>• Сезонни и специални колекции</li>
+              </ul>
+              <a
+                href="/products"
+                class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent transition shadow-lg hover:shadow-xl"
+              >
+                Виж продуктите
+              </a>
+            </div>
           </div>
           
-          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <h2 class="text-2xl font-bold mb-4">Услуги</h2>
-            <ul class="text-left space-y-2 mb-6">
-              <li>• 3D печат по поръчка</li>
-              <li>• Дизайн и моделиране</li>
-              <li>• 3D сканиране</li>
-            </ul>
-            <a
-              href="/services"
-              class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition"
-            >
-              Виж услугите
-            </a>
+          <!-- Services Card -->
+          <div class="group relative bg-white/15 backdrop-blur-md rounded-xl p-6 border border-white/20 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-900/50">
+            <!-- Card Background Pattern (Services - 3D printer/CAD pattern) -->
+            <div 
+              class="absolute inset-0 opacity-[0.12]"
+              style="background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px),
+                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 20px);
+                background-size: 40px 40px;"
+            ></div>
+            
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-br from-cyan-600/30 via-blue-600/20 to-indigo-800/40"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10">
+              <h2 class="text-2xl font-bold mb-4 text-white drop-shadow-md">Услуги</h2>
+              <ul class="text-left space-y-2 mb-6 text-blue-50">
+                <li>• 3D печат по поръчка</li>
+                <li>• Дизайн и моделиране</li>
+                <li>• 3D сканиране</li>
+              </ul>
+              <a
+                href="/services"
+                class="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent transition shadow-lg hover:shadow-xl"
+              >
+                Виж услугите
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -69,16 +126,12 @@ const featuredProducts = products
   </section>
 
   <!-- Top/New Products -->
-  <section class="py-12 bg-white">
-    <div class="container mx-auto px-4">
-      <SectionTitle title="Топ продукти" subtitle="Най-популярните и нови продукти" />
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {featuredProducts.map(product => (
-          <ProductCard product={product} />
-        ))}
-      </div>
-    </div>
-  </section>
+  <ProductCarousel 
+    products={featuredProducts}
+    id="top-products"
+    title="Топ продукти"
+    subtitle="Най-популярните и нови продукти"
+  />
 
   <!-- How It Works -->
   <section class="py-12 bg-gray-50">
