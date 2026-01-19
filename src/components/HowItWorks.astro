@@ -87,7 +87,7 @@ const productsPanelId = `${componentId}-panel-products`;
 const servicesPanelId = `${componentId}-panel-services`;
 ---
 
-<section class="py-12 bg-gray-50" aria-label="Как работим">
+<section id="how-it-works" class="py-12 bg-gray-50" aria-label="Как работим">
   <div class="container mx-auto px-4 max-w-6xl">
     <div class="text-center mb-12">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">Как работим</h2>
@@ -328,5 +328,26 @@ const servicesPanelId = `${componentId}-panel-services`;
 
     productsTab.addEventListener('keydown', (e) => handleKeyDown(e, 'products'));
     servicesTab.addEventListener('keydown', (e) => handleKeyDown(e, 'services'));
+
+    // Auto-select tab based on URL parameter or hash
+    const urlParams = new URLSearchParams(window.location.search);
+    const flowParam = urlParams.get('flow');
+    const hash = window.location.hash;
+
+    if (flowParam === 'products' || hash === '#how-it-works') {
+      // Switch to products tab if coming from products page
+      switchTab('products');
+      // Smooth scroll to section if hash is present
+      if (hash === '#how-it-works') {
+        setTimeout(() => {
+          const section = document.getElementById('how-it-works');
+          if (section) {
+            section.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    } else if (flowParam === 'services') {
+      switchTab('services');
+    }
   }
 </script>

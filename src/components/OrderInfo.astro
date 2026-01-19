@@ -1,0 +1,178 @@
+---
+interface Props {
+  learnMoreHref?: string;
+  contactHref?: string;
+}
+
+const { learnMoreHref = '/?flow=products#how-it-works', contactHref = '/contacts' } = Astro.props;
+const accordionId = `order-info-${Math.random().toString(36).substr(2, 9)}`;
+const buttonId = `order-info-btn-${accordionId}`;
+const panelId = `order-info-panel-${accordionId}`;
+
+const steps = [
+  { number: '01', title: 'Избираш продукт' },
+  { number: '02', title: 'Ако е персонализиран – изпращаш текст/снимка/идея' },
+  { number: '03', title: 'Потвърждение + изработка' },
+  { number: '04', title: 'Доставка (преглед/наложен платеж)' }
+];
+---
+
+<div class="bg-white border border-gray-200 rounded-2xl p-4 md:p-5 mb-6 shadow-sm">
+  <div class="flex items-start gap-4">
+    <!-- Icon -->
+    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex-1">
+          <h3 class="font-semibold text-gray-900 mb-1">Персонализирани продукти?</h3>
+          <p class="text-sm text-gray-600">
+            Изпрати текст/снимка/идея и ще изработим продукта по твоята идея.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id={buttonId}
+            type="button"
+            aria-expanded="false"
+            aria-controls={panelId}
+            class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          >
+            Как работи поръчката
+          </button>
+          <a
+            href={learnMoreHref}
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-colors"
+          >
+            Научи повече
+          </a>
+          <a
+            href={contactHref}
+            class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-colors"
+          >
+            Запитване
+          </a>
+        </div>
+      </div>
+
+      <!-- Accordion Panel -->
+      <div
+        id={panelId}
+        class="mt-4 pt-4 border-t border-gray-200 hidden"
+        aria-labelledby={buttonId}
+      >
+        <!-- Steps Container -->
+        <div class="relative">
+          <!-- Desktop: Horizontal Layout -->
+          <div class="hidden lg:flex items-start relative">
+            {steps.map((step, index) => (
+              <div class="flex items-center flex-1">
+                <!-- Step Content -->
+                <div class="flex-1 flex flex-col items-center relative z-10">
+                  <!-- Step Circle -->
+                  <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-md">
+                    {step.number}
+                  </div>
+                  
+                  <!-- Step Title -->
+                  <p class="text-sm text-gray-700 leading-relaxed mt-3 text-center px-2">
+                    {step.title}
+                  </p>
+                </div>
+                
+                <!-- Connector (between steps, not after last) -->
+                {index < steps.length - 1 && (
+                  <div class="flex-shrink-0 flex items-center px-2 relative" style="width: 2rem;">
+                    <!-- Horizontal Line -->
+                    <div class="absolute left-0 right-0 top-1/2 h-0.5 bg-blue-300/30 -translate-y-1/2" aria-hidden="true"></div>
+                    <!-- Arrow -->
+                    <div class="relative z-10 w-4 h-4 text-blue-400/50 mx-auto">
+                      <svg fill="currentColor" viewBox="0 0 12 12" aria-hidden="true">
+                        <path d="M8.293 6L4.293 2l1.414-1.414L11.121 6l-5.414 5.414L4.293 10 8.293 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <!-- Mobile/Tablet: Vertical Layout -->
+          <div class="lg:hidden space-y-6 pl-6 relative">
+            <!-- Vertical Line (left side) -->
+            <div 
+              class="absolute left-3 top-0 bottom-0 w-0.5 bg-blue-300/30"
+              style="height: calc(100% - 1.5rem); top: 0.75rem;"
+              aria-hidden="true"
+            ></div>
+            
+            {steps.map((step, index) => (
+              <div class="relative flex items-start gap-4">
+                <!-- Step Circle -->
+                <div class="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-md">
+                  {step.number}
+                </div>
+                
+                <!-- Downward Arrow (between steps, not after last) -->
+                {index < steps.length - 1 && (
+                  <div 
+                    class="absolute left-3.5 top-8 w-4 h-4 text-blue-400/50 -translate-x-1/2 z-10"
+                    aria-hidden="true"
+                  >
+                    <svg fill="currentColor" viewBox="0 0 12 12" aria-hidden="true">
+                      <path d="M6 8.293L2 4.293l1.414-1.414L6 5.465l2.586-2.586L10 4.293 6 8.293z" />
+                    </svg>
+                  </div>
+                )}
+                
+                <!-- Step Title -->
+                <p class="text-sm text-gray-700 leading-relaxed pt-1.5 flex-1">
+                  {step.title}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ buttonId, panelId }}>
+  const button = document.getElementById(buttonId);
+  const panel = document.getElementById(panelId);
+
+  if (button && panel) {
+    button.addEventListener('click', () => {
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+      const newState = !isExpanded;
+
+      button.setAttribute('aria-expanded', String(newState));
+      
+      if (newState) {
+        panel.classList.remove('hidden');
+        // Smooth scroll to panel if needed
+        setTimeout(() => {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 10);
+      } else {
+        panel.classList.add('hidden');
+      }
+    });
+
+    // Keyboard support
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        button.click();
+      }
+    });
+  }
+</script>

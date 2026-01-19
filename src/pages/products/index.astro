@@ -3,7 +3,7 @@ import Layout from '../../components/Layout.astro';
 import SectionTitle from '../../components/SectionTitle.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import FiltersBar from '../../components/FiltersBar.astro';
-import Steps from '../../components/Steps.astro';
+import OrderInfo from '../../components/OrderInfo.astro';
 import { getCollection, getEntry } from 'astro:content';
 
 let settings = null;
@@ -30,18 +30,8 @@ const visibleCategories = categoriesData.categories
   <div class="container mx-auto px-4 py-8">
     <SectionTitle title="Нашите продукти" subtitle="Разгледайте нашата колекция от 3D печатни продукти" />
 
-    <!-- How It Works for Products -->
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-xl font-bold mb-4">Как работи поръчката</h3>
-      <Steps
-        steps={[
-          { title: 'Избираш продукт' },
-          { title: 'Ако е персонализиран – изпращаш текст/снимка/идея' },
-          { title: 'Потвърждение + изработка' },
-          { title: 'Доставка (преглед/наложен платеж)' }
-        ]}
-      />
-    </div>
+    <!-- Order Info (Compact) -->
+    <OrderInfo />
 
     <div class="flex flex-col md:flex-row gap-6">
       <!-- Filters Sidebar -->
