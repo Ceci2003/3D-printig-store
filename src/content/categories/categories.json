@@ -36,6 +36,13 @@
     "order": 5
   },
   {
+    "id": "tebles",
+    "title": "Табели",
+    "description": "Табели за дома и офиса",
+    "visible": true,
+    "order": 5
+  },
+  {
     "id": "promo",
     "title": "Промо",
     "description": "Магнити, ключодържатели, лампи и други промо продукти",
