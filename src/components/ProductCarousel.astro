@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import ProductCard from './ProductCard.astro';
+import { getEntry } from 'astro:content';
 
 interface Props {
   products: CollectionEntry<'products'>[];
@@ -10,6 +11,20 @@ interface Props {
 }
 
 const { products, id, title, subtitle } = Astro.props;
+
+// Get seasonal config for badges
+let seasonalCategory = null;
+let activeSeasons: string[] = [];
+let seasonLabels: Record<string, string> = {};
+try {
+  const categoriesData = (await getEntry('categories', 'categories')).data;
+  seasonalCategory = categoriesData?.categories?.find((cat: any) => cat.id === 'seasonal') || null;
+  activeSeasons = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig) ? seasonalCategory.seasonalConfig.activeSeasons || [] : [];
+  seasonLabels = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig && seasonalCategory.seasonalConfig.seasonLabels) ? seasonalCategory.seasonalConfig.seasonLabels : {};
+} catch (e) {
+  // Categories not found, use defaults
+}
+---
 const carouselId = `carousel-${id}`;
 const trackId = `track-${id}`;
 const prevButtonId = `prev-${id}`;
@@ -84,7 +99,7 @@ const nextButtonId = `next-${id}`;
             <div 
               class="snap-start flex-shrink-0 w-[87%] sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
             >
-              <ProductCard product={product} />
+              <ProductCard product={product} seasonLabels={seasonLabels} activeSeasons={activeSeasons} />
             </div>
           ))}
         </div>

@@ -42,7 +42,8 @@ const categoriesCollection = defineCollection({
       icon: z.string().optional(),
       type: z.enum(['regular', 'seasonal']).default('regular'),
       seasonalConfig: z.object({
-        activeSeasons: z.array(z.enum(['christmas', 'valentine', 'easter'])),
+        activeSeasons: z.array(z.enum(['christmas', 'valentine', 'easter', 'womensday'])),
+        seasonLabels: z.record(z.string()).optional(),
       }).optional(),
     })),
   }),

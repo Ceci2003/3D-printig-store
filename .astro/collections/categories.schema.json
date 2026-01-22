@@ -47,8 +47,15 @@
                       "enum": [
                         "christmas",
                         "valentine",
-                        "easter"
+                        "easter",
+                        "womensday"
                       ]
+                    }
+                  },
+                  "seasonLabels": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
                     }
                   }
                 },

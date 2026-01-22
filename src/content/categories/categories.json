@@ -36,28 +36,34 @@
     "order": 5
   },
   {
-    "id": "tebles",
+    "id": "tables",
     "title": "Табели",
     "description": "Табели за дома и офиса",
     "visible": true,
-    "order": 5
+    "order": 6
   },
   {
     "id": "promo",
     "title": "Промо",
     "description": "Магнити, ключодържатели, лампи и други промо продукти",
     "visible": true,
-    "order": 6
+    "order": 7
   },
   {
     "id": "seasonal",
     "title": "Сезонни",
     "description": "Специални продукти за празници",
     "visible": true,
-    "order": 7,
+    "order": 8,
     "type": "seasonal",
     "seasonalConfig": {
-      "activeSeasons": ["christmas", "valentine", "easter"]
+      "activeSeasons": ["valentine", "womensday", "easter"],
+      "seasonLabels": {
+        "christmas": "Коледа",
+        "valentine": "Свети Валентин",
+        "easter": "Великден",
+        "womensday": "8-ми март"
+      }
     }
   }
 ]

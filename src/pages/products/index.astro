@@ -6,22 +6,52 @@ import FiltersBar from '../../components/FiltersBar.astro';
 import OrderInfo from '../../components/OrderInfo.astro';
 import { getCollection, getEntry } from 'astro:content';
 
-let settings = null;
+let settings: any = null;
 try {
-  settings = (await getEntry('site', 'settings')).data;
+  const entry = await getEntry('site', 'settings');
+  if (entry) {
+    settings = entry.data;
+  }
 } catch (e) {
   // Settings not found, use defaults
 }
 const products = await getCollection('products', ({ data }) => data.status === 'active');
-let categoriesData = null;
+let categoriesData: { categories: any[] } = { categories: [] };
 try {
-  categoriesData = (await getEntry('categories', 'categories')).data;
+  const entry = await getEntry('categories', 'categories');
+  if (entry && entry.data) {
+    categoriesData = entry.data;
+  }
 } catch (e) {
   categoriesData = { categories: [] };
 }
-const visibleCategories = categoriesData.categories
-  .filter(cat => cat.visible)
+const seasonalCategory = categoriesData?.categories?.find(cat => cat.id === 'seasonal') || null;
+const activeSeasons = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig) ? seasonalCategory.seasonalConfig.activeSeasons || [] : [];
+const seasonLabels = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig && seasonalCategory.seasonalConfig.seasonLabels) ? seasonalCategory.seasonalConfig.seasonLabels : {};
+
+// Filter out seasonal category if no active seasons
+const visibleCategories = (categoriesData?.categories || [])
+  .filter(cat => {
+    if (!cat.visible) return false;
+    // Hide seasonal category if no active seasons
+    if (cat.id === 'seasonal' && activeSeasons.length === 0) return false;
+    return true;
+  })
   .sort((a, b) => a.order - b.order);
+
+// Known season IDs for tag matching
+const knownSeasonIds = ['christmas', 'valentine', 'easter', 'womensday'];
+
+// Helper function to extract season IDs from product tags
+function getProductSeasonIds(tags: string[]): string[] {
+  const allSeasonIds = [...activeSeasons, ...knownSeasonIds];
+  return tags.filter(tag => allSeasonIds.includes(tag.toLowerCase()));
+}
+
+// Get URL params
+const urlParams = new URLSearchParams(Astro.url.search);
+const urlCategory = urlParams.get('category') || '';
+const urlSeasons = urlParams.get('seasons')?.split(',').filter(s => s) || [];
 ---
 
 <Layout>
@@ -81,6 +111,7 @@ const visibleCategories = categoriesData.categories
               data-customizable={product.data.isCustomizable} 
               data-title={product.data.title.toLowerCase()} 
               data-description={product.data.shortDescription.toLowerCase()}
+              data-tags={product.data.tags?.join(',') || ''}
               data-view="grid"
               data-product-slug={product.slug}
               data-product-title={product.data.title}
@@ -92,9 +123,10 @@ const visibleCategories = categoriesData.categories
               data-product-is-new={product.data.isNew || false}
               data-product-featured={product.data.featured || false}
               data-product-customizable={product.data.isCustomizable || false}
+              data-product-tags={product.data.tags?.join(',') || ''}
               class="product-wrapper"
             >
-              <ProductCard product={product} view="grid" />
+              <ProductCard product={product} view="grid" seasonLabels={seasonLabels} activeSeasons={activeSeasons} />
             </div>
           ))}
         </div>
@@ -103,7 +135,7 @@ const visibleCategories = categoriesData.categories
   </div>
 </Layout>
 
-<script>
+<script define:vars={{ activeSeasons, seasonLabels, knownSeasonIds: ['christmas', 'valentine', 'easter', 'womensday'] }}>
   const productsContainer = document.getElementById('products-container');
   const gridViewBtn = document.getElementById('grid-view-btn');
   const listViewBtn = document.getElementById('list-view-btn');
@@ -112,12 +144,37 @@ const visibleCategories = categoriesData.categories
   const customizableCheck = document.getElementById('customizable');
   const productCount = document.getElementById('product-count');
   const allProducts = Array.from(document.querySelectorAll('[data-product]'));
+  
+  // URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCategory = urlParams.get('category') || '';
+  const urlSeasonsParam = urlParams.get('seasons') || '';
+  const urlSeasons = urlSeasonsParam ? urlSeasonsParam.split(',').filter(s => s) : [];
+  
+  // Initialize form from URL
+  if (urlCategory && categorySelect) {
+    categorySelect.value = urlCategory;
+    // Trigger change to show season filter if needed
+    categorySelect.dispatchEvent(new Event('change'));
+  }
+  
+  if (urlSeasons.length > 0) {
+    urlSeasons.forEach(seasonId => {
+      const checkbox = document.getElementById('season-' + seasonId);
+      if (checkbox && checkbox instanceof HTMLInputElement) {
+        checkbox.checked = true;
+      }
+    });
+  }
 
   // Load saved view from localStorage or default to grid
-  let currentView = (localStorage.getItem('product-view') || 'grid') as 'grid' | 'list';
+  let currentView = localStorage.getItem('product-view') || 'grid';
+  if (currentView !== 'grid' && currentView !== 'list') {
+    currentView = 'grid';
+  }
 
   // View Toggle
-  function setView(view: 'grid' | 'list') {
+  function setView(view) {
     currentView = view;
     localStorage.setItem('product-view', view);
     
@@ -154,8 +211,25 @@ const visibleCategories = categoriesData.categories
       const isNew = productWrapper.getAttribute('data-product-is-new') === 'true';
       const featured = productWrapper.getAttribute('data-product-featured') === 'true';
       const customizable = productWrapper.getAttribute('data-product-customizable') === 'true';
+      const productTags = productWrapper.getAttribute('data-product-tags') || '';
+      const category = productWrapper.getAttribute('data-category') || '';
+      const isSeasonal = category === 'seasonal';
       
       const priceDisplay = price ? `${price} €` : priceFrom ? `от ${priceFrom} €` : 'По запитване';
+      
+      // Generate season badges HTML from tags
+      let seasonBadgesHTML = '';
+      if (isSeasonal && productTags) {
+        const tagArray = productTags.split(',').map(t => t.trim().toLowerCase());
+        const allSeasonIds = [...activeSeasons, ...knownSeasonIds];
+        const productSeasonIds = tagArray.filter(tag => allSeasonIds.includes(tag));
+        // Use first matching season for badge
+        if (productSeasonIds.length > 0) {
+          const firstSeason = productSeasonIds[0];
+          const label = seasonLabels[firstSeason] || firstSeason;
+          seasonBadgesHTML = `<span class="bg-purple-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">${label}</span>`;
+        }
+      }
       
       // Generate appropriate HTML based on view
       let cardHTML = '';
@@ -179,6 +253,7 @@ const visibleCategories = categoriesData.categories
                     ${isNew ? '<span class="bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Ново</span>' : ''}
                     ${featured ? '<span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Топ</span>' : ''}
                     ${customizable ? '<span class="bg-blue-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Персонализиран</span>' : ''}
+                    ${seasonBadgesHTML}
                   </div>
                 </div>
                 <p class="text-gray-600 text-sm mb-3 line-clamp-2 flex-1">${description}</p>
@@ -204,10 +279,11 @@ const visibleCategories = categoriesData.categories
                 ` : `
                   <img src="/images/missing-photo.png" alt="Липсващо изображение" class="w-full h-full object-cover" loading="lazy" />
                 `}
-                <div class="absolute top-2 right-2 flex gap-1">
+                <div class="absolute top-2 right-2 flex gap-1 flex-wrap">
                   ${isNew ? '<span class="bg-green-500 text-white text-xs px-2 py-1 rounded">Ново</span>' : ''}
                   ${featured ? '<span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded">Топ</span>' : ''}
                   ${customizable ? '<span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Персонализиран</span>' : ''}
+                  ${seasonBadgesHTML}
                 </div>
               </div>
               <div class="p-4 flex flex-col flex-1">
@@ -237,11 +313,44 @@ const visibleCategories = categoriesData.categories
   // Set initial view
   setView(currentView);
 
+  // Update URL with current filter state
+  function updateURL() {
+    const params = new URLSearchParams();
+    const category = categorySelect && categorySelect instanceof HTMLSelectElement ? categorySelect.value : '';
+    const search = searchInput && searchInput instanceof HTMLInputElement ? searchInput.value : '';
+    const customizable = customizableCheck && customizableCheck instanceof HTMLInputElement ? customizableCheck.checked : false;
+    
+    // Get selected seasons
+    const seasonCheckboxes = document.querySelectorAll('#season-filter-container input[type="checkbox"]:checked');
+    const selectedSeasons = Array.from(seasonCheckboxes).map(cb => cb instanceof HTMLInputElement ? cb.value : '').filter(v => v);
+    
+    if (category) params.set('category', category);
+    if (search) params.set('search', search);
+    if (customizable) params.set('customizable', 'true');
+    if (selectedSeasons.length > 0) params.set('seasons', selectedSeasons.join(','));
+    
+    const newURL = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
+  }
+
+  // Helper function to extract season IDs from product tags
+  function getProductSeasonIds(tags) {
+    if (!tags) return [];
+    const tagArray = tags.split(',').map(t => t.trim().toLowerCase());
+    const allSeasonIds = [...activeSeasons, ...knownSeasonIds];
+    return tagArray.filter(tag => allSeasonIds.includes(tag));
+  }
+
   // Filters
   function filterProducts() {
-    const searchTerm = (searchInput as HTMLInputElement)?.value.toLowerCase() || '';
-    const categoryFilter = (categorySelect as HTMLSelectElement)?.value || '';
-    const customizableFilter = (customizableCheck as HTMLInputElement)?.checked || false;
+    const searchTerm = searchInput && searchInput instanceof HTMLInputElement ? searchInput.value.toLowerCase() : '';
+    const categoryFilter = categorySelect && categorySelect instanceof HTMLSelectElement ? categorySelect.value : '';
+    const customizableFilter = customizableCheck && customizableCheck instanceof HTMLInputElement ? customizableCheck.checked : false;
+    
+    // Get selected seasons
+    const seasonCheckboxes = document.querySelectorAll('#season-filter-container input[type="checkbox"]:checked');
+    const selectedSeasons = Array.from(seasonCheckboxes).map(cb => cb instanceof HTMLInputElement ? cb.value : '').filter(v => v);
+    const isSeasonalCategory = categoryFilter === 'seasonal';
 
     let visibleCount = 0;
 
@@ -250,27 +359,70 @@ const visibleCategories = categoriesData.categories
       const customizable = product.getAttribute('data-customizable') === 'true';
       const title = product.getAttribute('data-title') || '';
       const description = product.getAttribute('data-description') || '';
+      const productTags = product.getAttribute('data-tags') || '';
+      const productSeasonIds = getProductSeasonIds(productTags);
 
       const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
       const matchesCategory = !categoryFilter || category === categoryFilter;
       const matchesCustomizable = !customizableFilter || customizable;
+      
+      // Season filtering logic
+      let matchesSeason = true;
+      if (isSeasonalCategory && category === 'seasonal') {
+        if (selectedSeasons.length === 0) {
+          // No selection: show products where tags intersect activeSeasons
+          matchesSeason = productSeasonIds.some(season => activeSeasons.includes(season));
+        } else {
+          // Selection: show products where tags intersect selectedSeasons
+          matchesSeason = productSeasonIds.some(season => selectedSeasons.includes(season));
+        }
+      } else if (isSeasonalCategory && category !== 'seasonal') {
+        // If seasonal category is selected but product is not seasonal, hide it
+        matchesSeason = false;
+      }
 
-      if (matchesSearch && matchesCategory && matchesCustomizable) {
-        (product as HTMLElement).style.display = '';
+      if (matchesSearch && matchesCategory && matchesCustomizable && matchesSeason) {
+        if (product instanceof HTMLElement) {
+          product.style.display = '';
+        }
         visibleCount++;
       } else {
-        (product as HTMLElement).style.display = 'none';
+        if (product instanceof HTMLElement) {
+          product.style.display = 'none';
+        }
       }
     });
 
     if (productCount) {
       productCount.textContent = String(visibleCount);
     }
+    
+    // Update URL
+    updateURL();
   }
 
   searchInput?.addEventListener('input', filterProducts);
   categorySelect?.addEventListener('change', filterProducts);
   customizableCheck?.addEventListener('change', filterProducts);
+  
+  // Season filter checkboxes
+  const seasonCheckboxes = document.querySelectorAll('#season-filter-container input[type="checkbox"]');
+  seasonCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', filterProducts);
+  });
+  
+  // Clear filters button - also clear URL params
+  const resetBtn = document.getElementById('reset-filters');
+  if (resetBtn) {
+    const originalReset = resetBtn.onclick;
+    resetBtn.addEventListener('click', () => {
+      window.history.replaceState({}, '', window.location.pathname);
+      filterProducts();
+    });
+  }
+  
+  // Initial filter on page load
+  filterProducts();
 
 </script>
 

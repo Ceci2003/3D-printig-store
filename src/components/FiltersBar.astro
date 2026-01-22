@@ -1,15 +1,23 @@
 ---
 import { getEntry } from 'astro:content';
 
-let categoriesData = null;
+let categoriesData: { categories: any[] } | null = null;
 try {
-  categoriesData = (await getEntry('categories', 'categories')).data;
+  const entry = await getEntry('categories', 'categories');
+  categoriesData = entry ? entry.data : { categories: [] };
 } catch (e) {
   categoriesData = { categories: [] };
 }
-const visibleCategories = categoriesData.categories
+const visibleCategories = (categoriesData?.categories || [])
   .filter(cat => cat.visible)
   .sort((a, b) => a.order - b.order);
+
+const seasonalCategory = categoriesData?.categories?.find(cat => cat.id === 'seasonal') || null;
+const activeSeasons = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig) ? seasonalCategory.seasonalConfig.activeSeasons || [] : [];
+const seasonLabels = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig && seasonalCategory.seasonalConfig.seasonLabels) ? seasonalCategory.seasonalConfig.seasonLabels : {};
+
+// Hide seasonal category if no active seasons
+const showSeasonalCategory = activeSeasons.length > 0;
 ---
 
 <div class="bg-white p-4 rounded-lg shadow-md mb-6">
@@ -35,9 +43,13 @@ const visibleCategories = categoriesData.categories
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="">Всички категории</option>
-        {visibleCategories.map(cat => (
-          <option value={cat.id}>{cat.title}</option>
-        ))}
+        {visibleCategories.map(cat => {
+          // Hide seasonal category if no active seasons
+          if (cat.id === 'seasonal' && !showSeasonalCategory) {
+            return null;
+          }
+          return <option value={cat.id}>{cat.title}</option>;
+        })}
       </select>
     </div>
 
@@ -51,6 +63,33 @@ const visibleCategories = categoriesData.categories
       />
       <label for="customizable" class="ml-2 text-sm text-gray-700">Само персонализирани</label>
     </div>
+
+    <!-- Season Filter (only shown when category is seasonal and activeSeasons exist) -->
+    {showSeasonalCategory && (
+      <div id="season-filter-container" class="hidden">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Сезон</label>
+        <div class="space-y-2">
+          {activeSeasons.length > 0 ? (
+            activeSeasons.map((seasonId: string) => (
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id={`season-${seasonId}`}
+                  name="seasons"
+                  value={seasonId}
+                  class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label for={`season-${seasonId}`} class="ml-2 text-sm text-gray-700">
+                  {seasonLabels[seasonId] || seasonId}
+                </label>
+              </div>
+            ))
+          ) : (
+            <p class="text-sm text-gray-500">Няма активни сезонни продукти</p>
+          )}
+        </div>
+      </div>
+    )}
 
     <!-- Reset Button -->
     <button
@@ -66,13 +105,42 @@ const visibleCategories = categoriesData.categories
 <script>
   const form = document.getElementById('filters-form');
   const resetBtn = document.getElementById('reset-filters');
+  const categorySelect = document.getElementById('category');
+  const seasonFilterContainer = document.getElementById('season-filter-container');
   
-  if (resetBtn) {
+  // Show/hide season filter based on category selection
+  function toggleSeasonFilter() {
+    const selectedCategory = (categorySelect as HTMLSelectElement)?.value || '';
+    if (seasonFilterContainer) {
+      if (selectedCategory === 'seasonal') {
+        seasonFilterContainer.classList.remove('hidden');
+      } else {
+        seasonFilterContainer.classList.add('hidden');
+        // Uncheck all season checkboxes when hidden
+        const seasonCheckboxes = seasonFilterContainer.querySelectorAll('input[type="checkbox"]');
+        seasonCheckboxes.forEach((checkbox) => {
+          (checkbox as HTMLInputElement).checked = false;
+        });
+      }
+    }
+  }
+  
+  if (categorySelect) {
+    categorySelect.addEventListener('change', toggleSeasonFilter);
+    // Check initial state
+    toggleSeasonFilter();
+  }
+  
+  if (resetBtn && form) {
     resetBtn.addEventListener('click', () => {
-      form?.reset();
+      if (form instanceof HTMLFormElement) {
+        form.reset();
+      }
+      // Hide season filter if not seasonal
+      toggleSeasonFilter();
       // Trigger filter update
       const event = new Event('input', { bubbles: true });
-      form?.dispatchEvent(event);
+      form.dispatchEvent(event);
     });
   }
 </script>
