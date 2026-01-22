@@ -13,26 +13,26 @@ interface Props {
 const { products, id, title, subtitle } = Astro.props;
 
 // Get seasonal config for badges
-let seasonalCategory = null;
+let seasonalCategory: any = null;
 let activeSeasons: string[] = [];
 let seasonLabels: Record<string, string> = {};
 try {
-  const categoriesData = (await getEntry('categories', 'categories')).data;
-  seasonalCategory = categoriesData?.categories?.find((cat: any) => cat.id === 'seasonal') || null;
-  activeSeasons = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig) ? seasonalCategory.seasonalConfig.activeSeasons || [] : [];
-  seasonLabels = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig && seasonalCategory.seasonalConfig.seasonLabels) ? seasonalCategory.seasonalConfig.seasonLabels : {};
+  const entry = await getEntry('categories', 'categories');
+  if (entry && entry.data) {
+    const categoriesData = entry.data;
+    seasonalCategory = categoriesData?.categories?.find((cat: any) => cat.id === 'seasonal') || null;
+    activeSeasons = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig) ? seasonalCategory.seasonalConfig.activeSeasons || [] : [];
+    seasonLabels = (seasonalCategory && 'seasonalConfig' in seasonalCategory && seasonalCategory.seasonalConfig && seasonalCategory.seasonalConfig.seasonLabels) ? seasonalCategory.seasonalConfig.seasonLabels : {};
+  }
 } catch (e) {
   // Categories not found, use defaults
 }
----
+
+// Carousel IDs
 const carouselId = `carousel-${id}`;
 const trackId = `track-${id}`;
 const prevButtonId = `prev-${id}`;
 const nextButtonId = `next-${id}`;
-
-// Calculate cards per view for responsive design
-// Mobile: ~1.15 cards, Tablet: 2-3 cards, Desktop: 4 cards
-// We'll use CSS to handle this, but need to set card width accordingly
 ---
 
 <section class="py-12 bg-white" role="region" aria-label={title || "Продукти"}>
@@ -95,7 +95,7 @@ const nextButtonId = `next-${id}`;
         aria-label="Продукти карусел"
       >
         <div class="flex gap-6 pb-4 px-1">
-          {products.map((product) => (
+          {products.map((product: CollectionEntry<'products'>) => (
             <div 
               class="snap-start flex-shrink-0 w-[87%] sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
             >
@@ -122,10 +122,12 @@ const nextButtonId = `next-${id}`;
   }
 </style>
 
-<script define:vars={{ trackId, prevButtonId, nextButtonId }}>
-  const track = document.getElementById(trackId);
-  const prevButton = document.getElementById(prevButtonId);
-  const nextButton = document.getElementById(nextButtonId);
+<script is:inline define:vars={{ trackId, prevButtonId, nextButtonId }}>
+  (function() {
+    'use strict';
+    const track = document.getElementById(trackId);
+    const prevButton = document.getElementById(prevButtonId);
+    const nextButton = document.getElementById(nextButtonId);
 
   if (!track || !prevButton || !nextButton) {
     console.warn('Carousel elements not found');
@@ -179,4 +181,5 @@ const nextButtonId = `next-${id}`;
       resizeTimeout = setTimeout(updateButtonStates, 150);
     });
   }
+  })();
 </script>
