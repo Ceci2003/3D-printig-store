@@ -61,6 +61,7 @@ const productsCollection = defineCollection({
     isCustomizable: z.boolean().default(false),
     featured: z.boolean().default(false),
     isNew: z.boolean().default(false),
+    isTop: z.boolean().default(false),
     status: z.enum(['active', 'draft']).default('active'),
     images: z.array(z.object({
       src: z.string(),

@@ -14,7 +14,7 @@ try {
 }
 const products = await getCollection('products', ({ data }) => data.status === 'active');
 const featuredProducts = products
-  .filter(p => p.data.featured || p.data.isNew)
+  .filter(p => p.data.isTop || p.data.featured || p.data.isNew)
   .slice(0, 8);
 ---
 

@@ -38,6 +38,10 @@
           "type": "boolean",
           "default": false
         },
+        "isTop": {
+          "type": "boolean",
+          "default": false
+        },
         "status": {
           "type": "string",
           "enum": [
