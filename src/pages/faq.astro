@@ -20,8 +20,7 @@ const accordionItems = sortedFaq.map(item => ({
 }));
 ---
 
-<Layout>
-  <title>Често задавани въпроси - {settings?.siteName || '3D Print Studio'}</title>
+<Layout title={`Често задавани въпроси - ${settings?.siteName || '3D Print Studio'}`}>
 
   <div class="container mx-auto px-4 py-8">
     <SectionTitle 

@@ -18,8 +18,7 @@ const featuredProducts = products
   .slice(0, 8);
 ---
 
-<Layout>
-  <title>{settings?.siteName || '3D Print Studio'} - Начало</title>
+<Layout title={`${settings?.siteName || '3D Print Studio'} - Начало`}>
 
   <!-- Hero Section -->
   <section class="relative text-white py-16 md:py-24 overflow-hidden">

@@ -58,8 +58,7 @@ if (settings?.viberNumber2 && !Array.isArray(settings?.viberContacts)) {
 const createViberLink = (number: string) => `viber://chat?number=${number.replace(/[^0-9]/g, '')}`;
 ---
 
-<Layout>
-  <title>Контакти - {settings?.siteName || '3D Print Studio'}</title>
+<Layout title={`Контакти - ${settings?.siteName || '3D Print Studio'}`}>
 
   <div class="container mx-auto px-4 py-8">
     <SectionTitle 
