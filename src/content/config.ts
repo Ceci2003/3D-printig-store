@@ -25,7 +25,7 @@ const settingsCollection = defineCollection({
     }).optional(),
     couriers: z.array(z.string()),
     defaultCurrency: z.string().default('BGN'),
-    turnaroundText: z.string().default('Обикновено 1–3 дни'),
+    turnaroundText: z.string().default('Обикновено 1–5 дни'),
     paymentOptions: z.array(z.string()),
   }),
 });

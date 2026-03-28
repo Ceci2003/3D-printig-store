@@ -15,18 +15,18 @@ const { steps } = Astro.props;
 // Get settings for info card
 let settings = null;
 let couriers: string[] = [];
-let turnaroundText = '1–3 дни';
+let turnaroundText = '1–5 дни';
 try {
   const entry = await getEntry('site', 'settings');
   if (entry && entry.data) {
     settings = entry.data;
     couriers = settings.couriers || [];
-    turnaroundText = settings.turnaroundText || '1–3 дни';
+    turnaroundText = settings.turnaroundText || '1–5 дни';
   }
 } catch (e) {
   // Settings not found, use defaults
   couriers = ['Еконт', 'Спиди'];
-  turnaroundText = '1–3 дни';
+  turnaroundText = '1–5 дни';
 }
 
 // Info card content
