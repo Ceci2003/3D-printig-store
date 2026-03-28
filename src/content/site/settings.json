@@ -1,19 +1,23 @@
 {
   "siteName": "3D Print Studio",
   "brandTagline": "Вашият партньор за 3D печат и дизайн",
-  "contactPhone": "+359 899 597 906",
-  "contactPhone2": "+359 878 499 026",
+  "contactPhone": "+359 878 499 026",
   "contactEmail": "info@3dprintstudio.bg",
   "address": "Монтана, България",
-  "viberNumber": "+359 899 597 906",
-  "viberNumber2": "+359 878 499 026",
+  "viberNumber": "+359 878 499 026",
   "social": {
     "facebook": "https://facebook.com/3dprintstudio",
     "instagram": "https://instagram.com/3dprintstudio"
   },
-  "couriers": ["Еконт", "Спиди"],
+  "couriers": [
+    "Еконт",
+    "Спиди"
+  ],
   "defaultCurrency": "EUR",
   "turnaroundText": "Обикновено 1–5 дни",
-  "paymentOptions": ["Наложен платеж", "Преглед преди плащане", "Банков превод"]
+  "paymentOptions": [
+    "Наложен платеж",
+    "Преглед преди плащане",
+    "Банков превод"
+  ]
 }
-

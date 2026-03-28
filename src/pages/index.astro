@@ -22,8 +22,12 @@ const featuredProducts = products
 
   <!-- Hero Section -->
   <section class="relative text-white py-16 md:py-24 overflow-hidden">
-    <!-- Background Layers -->
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900"></div>
+    <!-- Background Image & Overlays -->
+    <div class="absolute inset-0">
+      <img src="/images/hero-bg.png" alt="Working 3D Printer" class="w-full h-full object-cover object-center" />
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/85 via-blue-800/75 to-indigo-900/85 mix-blend-multiply"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-transparent to-blue-900/70"></div>
+    </div>
     
     <!-- Subtle Pattern Background (3D printing grid pattern) -->
     <div 
@@ -34,9 +38,6 @@ const featuredProducts = products
         background-size: 50px 50px;
         filter: blur(0.5px);"
     ></div>
-    
-    <!-- Gradient Overlay for Text Readability -->
-    <div class="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-transparent to-blue-900/60"></div>
     
     <!-- Subtle Grain Effect -->
     <div 
