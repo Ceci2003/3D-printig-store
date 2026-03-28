@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props;
 const { data, body } = product;
+const { Content } = await product.render();
 let settings = null;
 try {
   settings = (await getEntry('site', 'settings')).data;
@@ -146,7 +147,7 @@ const priceDisplay = data.price ? `${data.price} €` : data.priceFrom ? `от $
       <!-- Long Description -->
       <div class="prose max-w-none mb-8">
         <h2>Описание</h2>
-        <div set:html={body} />
+        <Content />
       </div>
     </div>
   </div>

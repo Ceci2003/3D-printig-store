@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { data, body } = project;
+const { Content } = await project.render();
 let settings = null;
 try {
   settings = (await getEntry('site', 'settings')).data;
@@ -94,7 +95,7 @@ try {
 
       {body && (
         <div class="prose max-w-none">
-          <div set:html={body} />
+          <Content />
         </div>
       )}
 
