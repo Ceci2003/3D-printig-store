@@ -1,26 +1,19 @@
 ---
-id: "car-phone-holder"
-title: "Държачка за телефон в кола"
-categoryId: "auto-parts"
-tags: ["авто", "аксесоар"]
-price: 12
-isCustomizable: false
-featured: false
-isNew: true
+id: "address-sign"
+title: "Табела с адрес"
+categoryId: "gifts"
+tags: ["табела", "адрес", "подарък"]
+price: 15
+isCustomizable: true
+featured: true
+isNew: false
 status: "active"
 images:
-  - src: "/images/products/car-phone-holder/1.jpg"
-    alt: "Държачка за телефон в кола"
-shortDescription: "Универсална държачка за телефон с вентилационна крепеж"
-materials: ["PETG"]
+  - src: "/images/products/product-3/1.jpg"
+    alt: "Табела с адрес"
+shortDescription: "Табела с адрес"
+materials: ["ASA"]
 ---
 
-Стабилна и надеждна държачка за телефон, подходяща за всички модели автомобили.
-
-## Предимства
-
-- Универсален размер
-- Лесна инсталация
-- Стабилна фиксация
-- Издръжлив материал
+Табела с адрес за вашата къща или вила. Перфектна за всеки стил къща.
 

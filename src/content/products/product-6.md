@@ -1,6 +1,6 @@
 ---
 id: "promo-magnet"
-title: "Промо магнит"
+title: "Магнит пчеличка"
 categoryId: "promo"
 tags: ["промо", "магнит"]
 priceFrom: 3
@@ -9,11 +9,11 @@ featured: false
 isNew: false
 status: "active"
 images:
-  - src: "/images/products/promo-magnet/1.jpg"
-    alt: "Промо магнит"
-shortDescription: "Персонализиран магнит за реклама или подарък"
+  - src: "/images/products/product-6/1.jpg"
+    alt: "Магнит пчеличка"
+shortDescription: "Магнит пчеличка"
 materials: ["PLA"]
 ---
 
-Идеален за промо кампании или персонализирани подаръци. Минимална поръчка: 10 броя.
+Идеален за подарък.
 

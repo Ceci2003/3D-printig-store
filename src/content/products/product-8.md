@@ -1,17 +1,17 @@
 ---
 id: "valentine-heart"
-title: "Валентинско сърце"
+title: "Валентинско мече 'I Love You'"
 categoryId: "seasonal"
 tags: ["валентин", "подарък", "valentine"]
-price: 20
-isCustomizable: true
+price: 10
+isCustomizable: false
 featured: false
 isNew: false
 status: "active"
 images:
-  - src: "/images/products/valentine-heart/1.jpg"
-    alt: "Валентинско сърце"
-shortDescription: "Персонализирано сърце за валентин ден"
+  - src: "/images/products/product-8/1.JPG"
+    alt: "Валентинско мече"
+shortDescription: "Мече от рози със табелка 'I Love You'"
 materials: ["PLA", "PETG"]
 ---
 

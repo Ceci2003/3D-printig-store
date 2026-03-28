@@ -37,13 +37,15 @@ try {
 
       {data.images && data.images.length > 0 ? (
         <div class="mb-8">
-          <img
-            src={data.images[0].src}
-            alt={data.images[0].alt || data.title}
-            class="w-full rounded-lg shadow-md mb-4"
-            id="main-image"
-            onerror="this.src='/images/missing-photo.png'; this.onerror=null;"
-          />
+          <div class="w-full md:w-5/6 mx-auto rounded-xl shadow-lg mb-6 overflow-hidden bg-gray-50 flex items-center justify-center h-[350px] md:h-[450px]">
+            <img
+              src={data.images[0].src}
+              alt={data.images[0].alt || data.title}
+              class="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-125 cursor-zoom-in drop-shadow-sm"
+              id="main-image"
+              onerror="this.src='/images/missing-photo.png'; this.onerror=null;"
+            />
+          </div>
           {data.images.length > 1 && (
             <div class="grid grid-cols-4 gap-2">
               {data.images.map((img, idx) => (

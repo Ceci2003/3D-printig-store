@@ -3,13 +3,13 @@ id: "personalized-figurine"
 title: "Персонализирана фигурка"
 categoryId: "customizable"
 tags: ["персонализиран", "подарък"]
-price: 45
+priceFrom: 25
 isCustomizable: true
 featured: true
 isNew: true
 status: "active"
 images:
-  - src: "/images/products/personalized-figurine/1.jpg"
+  - src: "/images/products/product-1/1.jpg"
     alt: "Персонализирана фигурка"
 shortDescription: "Уникална 3D фигурка по ваша снимка"
 materials: ["PLA", "PETG"]
